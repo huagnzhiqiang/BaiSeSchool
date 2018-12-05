@@ -96,7 +96,7 @@ public abstract class BaseActivity extends RxAppCompatActivity {
     protected void initImmersionBar() {
         mImmersionBar = ImmersionBar.with(this);
         mImmersionBar.fitsSystemWindows(true);
-        mImmersionBar.statusBarColor(R.color.colorAccent);
+        mImmersionBar.statusBarColor(R.color.colorPrimary);
         mImmersionBar.init();
     }
 
