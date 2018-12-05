@@ -19,8 +19,8 @@ public class MsmAdapter extends BaseMultiItemQuickAdapter<MsmEntity, BaseViewHol
         super(null);
         addItemType(SEND, R.layout.left);
         addItemType(RECEIVER, R.layout.right);
-
     }
+
 
     @Override
     protected void convert(BaseViewHolder helper, MsmEntity item) {

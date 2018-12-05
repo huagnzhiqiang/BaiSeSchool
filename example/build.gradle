@@ -40,5 +40,6 @@ dependencies {
     implementation project(':base-libs')
     /* 底部菜单 */
     implementation 'com.flyco.tablayout:FlycoTabLayout_Lib:2.1.2@aar'
+
 }
 

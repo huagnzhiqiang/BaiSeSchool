@@ -1,17 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:fitsSystemWindows="true"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recycler_view"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_above="@+id/ll_send"
+        android:layout_height="0dp"
+        android:layout_weight="1"
         android:overScrollMode="never"
-        android:paddingBottom="2dp"
         android:scrollbars="none"/>
 
 
@@ -19,7 +20,6 @@
         android:id="@+id/ll_send"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:layout_alignParentBottom="true"
         android:gravity="bottom">
 
 
@@ -27,18 +27,17 @@
             android:id="@+id/sendText"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:background="@null"/>
+            android:layout_weight="1"/>
 
 
         <ImageView
-
             android:id="@+id/iv_send"
             android:layout_width="?android:actionBarSize"
             android:layout_height="?android:actionBarSize"
             android:layout_gravity="center"
             android:padding="5dp"
             android:src="@drawable/send"/>
+
     </LinearLayout>
 
-</RelativeLayout>
+</LinearLayout>

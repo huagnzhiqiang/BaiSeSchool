@@ -7,13 +7,18 @@ import android.text.TextUtils;
 import android.widget.EditText;
 
 import com.baise.baselibs.base.BaseFragment;
+import com.baise.baselibs.utils.ToastUtils;
 import com.baise.school.R;
 import com.baise.school.adapter.MsmAdapter;
 import com.baise.school.data.entity.MsmEntity;
 import com.baise.school.data.entity.MsnBean;
 import com.baise.school.data.repository.RetrofitUtils;
+import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.chad.library.adapter.base.loadmore.SimpleLoadMoreView;
 import com.orhanobut.logger.Logger;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -36,6 +41,9 @@ public class MsmFragment extends BaseFragment<VideoPresenter> {
     @BindView(R.id.sendText) EditText mSendText;
     private String mTitle;
     private MsmAdapter mAdapter;
+
+    private double currentTime = 0, oldTime = 0;
+
 
     public static MsmFragment getInstance(String title) {
         MsmFragment fragment = new MsmFragment();
@@ -69,13 +77,31 @@ public class MsmFragment extends BaseFragment<VideoPresenter> {
 
     }
 
+
+
+    /**
+     * 初始化沉浸式状态栏和沉浸式
+     */
+    @Override
+    protected void initImmersionBar() {
+        super.initImmersionBar();
+        mImmersionBar.fitsSystemWindows(false);
+        mImmersionBar.init();
+    }
+
+
     /** ==================初始化适配器===================== */
     private void initAdapter() {
         mAdapter = new MsmAdapter();
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-//        mAdapter.openLoadAnimation(BaseQuickAdapter.SLIDEIN_LEFT);
-//        mAdapter.setLoadMoreView(new SimpleLoadMoreView());
+        mAdapter.openLoadAnimation(BaseQuickAdapter.SLIDEIN_LEFT);
+        mAdapter.setLoadMoreView(new SimpleLoadMoreView());
+
+        if (mAdapter != null) {
+            MsmEntity entity = new MsmEntity().setContent("欢迎来到百色学院").setTime(getTime()).setType(MsmAdapter.SEND);
+            mAdapter.addData(entity);
+        }
     }
 
 
@@ -87,12 +113,12 @@ public class MsmFragment extends BaseFragment<VideoPresenter> {
 
             if (mAdapter != null) {
                 mSendText.setText("");
-
-
-                MsmEntity entity = new MsmEntity().setContent(msg).setType(MsmAdapter.SEND);
+                MsmEntity entity = new MsmEntity().setContent(msg).setTime(getTime()).setType(MsmAdapter.SEND);
                 mAdapter.addData(entity);
             }
             senSms(msg);
+        } else {
+            ToastUtils.showShort("快来问我问题吧");
         }
     }
 
@@ -119,7 +145,7 @@ public class MsmFragment extends BaseFragment<VideoPresenter> {
 
 
                         if (mAdapter != null) {
-                            MsmEntity entity = new MsmEntity().setContent(s.getText()).setType(MsmAdapter.RECEIVER);
+                            MsmEntity entity = new MsmEntity().setContent(s.getText()).setTime(getTime()).setType(MsmAdapter.RECEIVER);
 
                             mAdapter.addData(entity);
                         }
@@ -138,6 +164,22 @@ public class MsmFragment extends BaseFragment<VideoPresenter> {
                     }
                 });
 
+
+    }
+
+
+    private String getTime() {
+
+        currentTime = System.currentTimeMillis();
+        SimpleDateFormat format = new SimpleDateFormat("yyyy年MM月dd日 HH:mm:ss");
+        Date curDate = new Date();
+        String str = format.format(curDate);
+        if (currentTime - oldTime >= 5000) {
+            oldTime = currentTime;
+            return str;
+        } else {
+            return "";
+        }
 
     }
 
