@@ -3,9 +3,8 @@ package com.baise.school.ui.main.video;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
+import android.text.TextUtils;
+import android.widget.EditText;
 
 import com.baise.baselibs.base.BaseFragment;
 import com.baise.school.R;
@@ -13,15 +12,13 @@ import com.baise.school.adapter.MsmAdapter;
 import com.baise.school.data.entity.MsmEntity;
 import com.baise.school.data.entity.MsnBean;
 import com.baise.school.data.repository.RetrofitUtils;
-import com.chad.library.adapter.base.BaseQuickAdapter;
-import com.chad.library.adapter.base.loadmore.SimpleLoadMoreView;
 import com.orhanobut.logger.Logger;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
+import butterknife.OnClick;
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
@@ -36,6 +33,7 @@ public class MsmFragment extends BaseFragment<VideoPresenter> {
 
 
     @BindView(R.id.recycler_view) RecyclerView mRecyclerView;
+    @BindView(R.id.sendText) EditText mSendText;
     private String mTitle;
     private MsmAdapter mAdapter;
 
@@ -68,7 +66,7 @@ public class MsmFragment extends BaseFragment<VideoPresenter> {
     protected void initData() {
 
         initAdapter();
-        senSms();
+
     }
 
     /** ==================初始化适配器===================== */
@@ -76,19 +74,36 @@ public class MsmFragment extends BaseFragment<VideoPresenter> {
         mAdapter = new MsmAdapter();
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        mAdapter.openLoadAnimation(BaseQuickAdapter.SLIDEIN_LEFT);
-        mAdapter.setLoadMoreView(new SimpleLoadMoreView());
+//        mAdapter.openLoadAnimation(BaseQuickAdapter.SLIDEIN_LEFT);
+//        mAdapter.setLoadMoreView(new SimpleLoadMoreView());
     }
 
-    public void senSms() {
+
+    @OnClick(R.id.iv_send)
+    public void onClick() {
+
+        String msg = mSendText.getText().toString().trim();
+        if (!TextUtils.isEmpty(msg)) {
+
+            if (mAdapter != null) {
+                mSendText.setText("");
+
+
+                MsmEntity entity = new MsmEntity().setContent(msg).setType(MsmAdapter.SEND);
+                mAdapter.addData(entity);
+            }
+            senSms(msg);
+        }
+    }
+
+
+    public void senSms(String msg) {
 
         Map<String, String> map = new HashMap<>();
 
-        map.put("key", "e2109786d8d4593345fb3b75e65089c0");
-        map.put("info", "广州大学");
-
         String url = "http://www.tuling123.com/openapi/api";
-
+        map.put("key", "e2109786d8d4593345fb3b75e65089c0");
+        map.put("info", msg);
 
         RetrofitUtils.getHttpService().requestSmsData(url, map).subscribeOn(Schedulers.io()).
                 observeOn(Schedulers.io()).
@@ -102,10 +117,12 @@ public class MsmFragment extends BaseFragment<VideoPresenter> {
                     @Override
                     public void onNext(MsnBean s) {
 
-                        MsmEntity entity = new MsmEntity().setContent(s.getText()).setType(2);
 
-                        mAdapter.addData(entity);
+                        if (mAdapter != null) {
+                            MsmEntity entity = new MsmEntity().setContent(s.getText()).setType(MsmAdapter.RECEIVER);
 
+                            mAdapter.addData(entity);
+                        }
                         Logger.d("onError--->:" + s.toString());
 
                     }
@@ -155,11 +172,5 @@ public class MsmFragment extends BaseFragment<VideoPresenter> {
 
     }
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        // TODO: inflate a fragment view
-        View rootView = super.onCreateView(inflater, container, savedInstanceState);
-        ButterKnife.bind(this, rootView);
-        return rootView;
-    }
+
 }

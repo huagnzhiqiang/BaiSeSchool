@@ -17,7 +17,6 @@ public class MsmAdapter extends BaseMultiItemQuickAdapter<MsmEntity, BaseViewHol
 
     public MsmAdapter() {
         super(null);
-
         addItemType(SEND, R.layout.left);
         addItemType(RECEIVER, R.layout.right);
 
@@ -31,7 +30,6 @@ public class MsmAdapter extends BaseMultiItemQuickAdapter<MsmEntity, BaseViewHol
 
             //发送
             case SEND:
-
                 helper.setText(R.id.tv, item.getContent()).setText(R.id.time, item.getTime());
                 break;
 

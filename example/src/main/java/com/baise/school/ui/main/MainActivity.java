@@ -38,7 +38,7 @@ public class MainActivity extends BaseMvpActivity<MainPresenter> implements Main
     private MineFragment mMineFragment;
 
     // 顶部滑动的标签栏
-    private String[] mTitles = {"首页", "视频", "我的"};
+    private String[] mTitles = {"学校", "趣味问答", "我的"};
     // 未被选中的图标
     private int[] mIconUnSelectIds = {R.mipmap.ic_launcher, R.mipmap.ic_launcher, R.mipmap.ic_launcher};
     // 被选中的图标
