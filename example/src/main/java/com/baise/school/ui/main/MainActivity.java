@@ -6,6 +6,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.widget.FrameLayout;
 
+import com.baise.school.ui.main.video.MsmFragment;
 import com.flyco.tablayout.CommonTabLayout;
 import com.flyco.tablayout.listener.CustomTabEntity;
 import com.flyco.tablayout.listener.OnTabSelectListener;
@@ -15,7 +16,6 @@ import com.baise.school.data.entity.TabEntity;
 import com.baise.school.data.entity.TestNews;
 import com.baise.school.ui.main.home.HomeFragment;
 import com.baise.school.ui.main.mine.MineFragment;
-import com.baise.school.ui.main.video.VideoFragment;
 import com.orhanobut.logger.Logger;
 
 import java.util.ArrayList;
@@ -34,7 +34,7 @@ public class MainActivity extends BaseMvpActivity<MainPresenter> implements Main
 
 
     private HomeFragment mHomeFragment;
-    private VideoFragment mVideoFragment;
+    private MsmFragment mVideoFragment;
     private MineFragment mMineFragment;
 
     // 顶部滑动的标签栏
@@ -163,7 +163,7 @@ public class MainActivity extends BaseMvpActivity<MainPresenter> implements Main
                 break;
             case 1: //视频
                 if (mVideoFragment == null) {
-                    mVideoFragment = VideoFragment.getInstance(mTitles[1]);
+                    mVideoFragment = MsmFragment.getInstance(mTitles[1]);
                     transaction.add(R.id.fl_container, mVideoFragment, "video");
                 } else {
                     transaction.show(mVideoFragment);

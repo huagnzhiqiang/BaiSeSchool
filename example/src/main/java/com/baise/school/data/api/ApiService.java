@@ -1,9 +1,10 @@
 package com.baise.school.data.api;
 
+import com.baise.baselibs.net.BaseHttpResult;
 import com.baise.school.data.entity.LoginEntity;
 import com.baise.school.data.entity.MineEntity;
+import com.baise.school.data.entity.MsnBean;
 import com.baise.school.data.entity.TestNews;
-import com.baise.baselibs.net.BaseHttpResult;
 
 import java.util.List;
 import java.util.Map;
@@ -13,6 +14,8 @@ import retrofit2.http.FieldMap;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
+import retrofit2.http.QueryMap;
+import retrofit2.http.Url;
 
 /**
  * @author 小强
@@ -32,4 +35,8 @@ public interface ApiService {
     @POST("/api/user/login")
     Observable<BaseHttpResult<LoginEntity>> getLoginData(@FieldMap Map<String,String> map);
 
+
+    //获取聊天
+    @GET
+    Observable<MsnBean> requestSmsData(@Url String url, @QueryMap Map<String,String> map);
 }
