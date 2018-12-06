@@ -88,6 +88,7 @@ public class MainActivity extends BaseMvpActivity<MainPresenter> implements Main
     protected void initImmersionBar() {
         super.initImmersionBar();
         mImmersionBar.fitsSystemWindows(false);
+//        mImmersionBar.keyboardEnable(true);  //解决软键盘与底部输入框冲突问题
         mImmersionBar.init();
     }
 
@@ -136,10 +137,10 @@ public class MainActivity extends BaseMvpActivity<MainPresenter> implements Main
         });
 
 
-        //设备红点
-        tabLayout.showDot(0);
-        tabLayout.showMsg(1, 100);
-        tabLayout.showDot(2);
+//        //设备红点
+//        tabLayout.showDot(0);
+//        tabLayout.showMsg(1, 100);
+//        tabLayout.showDot(2);
 
     }
 

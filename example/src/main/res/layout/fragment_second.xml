@@ -2,7 +2,6 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:fitsSystemWindows="true"
     android:layout_height="match_parent"
     android:orientation="vertical">
 
@@ -16,28 +15,52 @@
         android:scrollbars="none"/>
 
 
-    <LinearLayout
-        android:id="@+id/ll_send"
+
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:gravity="bottom">
+        android:background="#F5F6F7">
+
 
 
         <EditText
             android:id="@+id/sendText"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"/>
+            android:layout_width="match_parent"
+            android:layout_height="33dp"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dip"
+            android:background="@null"
+            android:hint="请输入内容"
+            android:maxLength="240"
+            android:padding="2dip"
+            android:singleLine="true"
+            android:textColor="#333333"
+            android:textSize="14sp" />
 
+        <TextView
+            android:id="@+id/tv_send_sms"
+            android:layout_width="50dp"
+            android:layout_height="30dp"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="5dp"
+            android:background="@drawable/btn_login_selector"
+            android:gravity="center"
+            android:text="发 送"
+            android:textColor="#ffffff"
+            android:textSize="14sp"
+            android:visibility="gone" />
 
         <ImageView
             android:id="@+id/iv_send"
-            android:layout_width="?android:actionBarSize"
-            android:layout_height="?android:actionBarSize"
-            android:layout_gravity="center"
-            android:padding="5dp"
-            android:src="@drawable/send"/>
+            android:layout_width="30dip"
+            android:layout_height="30dip"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="5dp"
+            android:src="@drawable/btn_chat_voice_selector" />
 
-    </LinearLayout>
+    </RelativeLayout>
 
 </LinearLayout>

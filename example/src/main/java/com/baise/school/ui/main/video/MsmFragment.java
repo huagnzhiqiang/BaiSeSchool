@@ -3,8 +3,13 @@ package com.baise.school.ui.main.video;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
+import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.baise.baselibs.base.BaseFragment;
 import com.baise.baselibs.utils.ToastUtils;
@@ -39,6 +44,8 @@ public class MsmFragment extends BaseFragment<VideoPresenter> {
 
     @BindView(R.id.recycler_view) RecyclerView mRecyclerView;
     @BindView(R.id.sendText) EditText mSendText;
+    @BindView(R.id.tv_send_sms) TextView mTvSendSms;
+    @BindView(R.id.iv_send) ImageView mIvSend;
     private String mTitle;
     private MsmAdapter mAdapter;
 
@@ -66,7 +73,26 @@ public class MsmFragment extends BaseFragment<VideoPresenter> {
 
     @Override
     protected void initListener() {
+        mSendText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
 
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (s.length() > 0) {
+                    mTvSendSms.setVisibility(View.VISIBLE);
+                    mIvSend.setVisibility(View.GONE);
+                } else {
+                    mTvSendSms.setVisibility(View.GONE);
+                    mIvSend.setVisibility(View.VISIBLE);
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+            }
+        });
     }
 
 
@@ -78,7 +104,6 @@ public class MsmFragment extends BaseFragment<VideoPresenter> {
     }
 
 
-
     /**
      * 初始化沉浸式状态栏和沉浸式
      */
@@ -86,6 +111,7 @@ public class MsmFragment extends BaseFragment<VideoPresenter> {
     protected void initImmersionBar() {
         super.initImmersionBar();
         mImmersionBar.fitsSystemWindows(false);
+        mImmersionBar.keyboardEnable(true);  //解决软键盘与底部输入框冲突问题
         mImmersionBar.init();
     }
 
@@ -99,24 +125,51 @@ public class MsmFragment extends BaseFragment<VideoPresenter> {
         mAdapter.setLoadMoreView(new SimpleLoadMoreView());
 
         if (mAdapter != null) {
-            MsmEntity entity = new MsmEntity().setContent("欢迎来到百色学院").setTime(getTime()).setType(MsmAdapter.SEND);
+            MsmEntity entity = new MsmEntity().setContent("欢迎来到百色学院").setTime(getTime()).setType(MsmAdapter.RECEIVER);
             mAdapter.addData(entity);
         }
     }
 
 
-    @OnClick(R.id.iv_send)
+    @OnClick(R.id.tv_send_sms)
     public void onClick() {
 
         String msg = mSendText.getText().toString().trim();
         if (!TextUtils.isEmpty(msg)) {
-
+            MsmEntity entity;
             if (mAdapter != null) {
                 mSendText.setText("");
-                MsmEntity entity = new MsmEntity().setContent(msg).setTime(getTime()).setType(MsmAdapter.SEND);
+                entity = new MsmEntity().setContent(msg).setTime(getTime()).setType(MsmAdapter.SEND);
                 mAdapter.addData(entity);
+                mRecyclerView.scrollToPosition(mAdapter.getItemCount() - 1);
+
+                if (msg.equals("百色学院地址")) {
+                    String s = "广西百色中山二路21号。";
+
+                    entity = new MsmEntity().setContent(s).setTime(getTime()).setType(MsmAdapter.RECEIVER);
+                    mAdapter.addData(entity);
+                    mRecyclerView.scrollToPosition(mAdapter.getItemCount() - 1);
+
+                } else if (msg.equals("百色学院")) {
+                    String s = "东合校区：广西百色中山二路21号,澄碧校区：324国道百色学院澄碧校区(东南门)附近";
+
+                    entity = new MsmEntity().setContent(s).setTime(getTime()).setType(MsmAdapter.RECEIVER);
+                    mAdapter.addData(entity);
+                    mRecyclerView.scrollToPosition(mAdapter.getItemCount() - 1);
+
+                } else if (msg.equals("百色学院简介")) {
+                    String s = "百色学院是2006年教育部批准成立的实行“区市共建、以市为主”办学体制的普通本科高校。77年来，学校坚持在“老、少、边、山、穷、库”地区办学，凝练了“团结合作、艰苦奋斗、克难攻坚、磨砺成才”的“石磨精神”，走出一条艰苦创业的发展之路，为边疆民族地区的经济发展、社会进步和国防巩固作出巨大贡献。";
+                    entity = new MsmEntity().setContent(s).setTime(getTime()).setType(MsmAdapter.RECEIVER);
+                    mAdapter.addData(entity);
+                    mRecyclerView.scrollToPosition(mAdapter.getItemCount() - 1);
+
+                } else {
+                    senSms(msg);
+                }
+
             }
-            senSms(msg);
+
+
         } else {
             ToastUtils.showShort("快来问我问题吧");
         }
@@ -146,8 +199,8 @@ public class MsmFragment extends BaseFragment<VideoPresenter> {
 
                         if (mAdapter != null) {
                             MsmEntity entity = new MsmEntity().setContent(s.getText()).setTime(getTime()).setType(MsmAdapter.RECEIVER);
-
                             mAdapter.addData(entity);
+                            mRecyclerView.scrollToPosition(mAdapter.getItemCount() - 1);
                         }
                         Logger.d("onError--->:" + s.toString());
 
@@ -174,7 +227,7 @@ public class MsmFragment extends BaseFragment<VideoPresenter> {
         SimpleDateFormat format = new SimpleDateFormat("yyyy年MM月dd日 HH:mm:ss");
         Date curDate = new Date();
         String str = format.format(curDate);
-        if (currentTime - oldTime >= 5000) {
+        if (currentTime - oldTime >= 50000) {
             oldTime = currentTime;
             return str;
         } else {
@@ -215,4 +268,33 @@ public class MsmFragment extends BaseFragment<VideoPresenter> {
     }
 
 
+
+//    /**
+//     * 隐藏软键盘
+//     * hideSoftInputView
+//     *
+//     * @param
+//     * @return void
+//     * @throws
+//     * @Title: hideSoftInputView
+//     */
+//    public void hideSoftInputView() {
+//        InputMethodManager manager = ((InputMethodManager) this.getSystemService(Activity.INPUT_METHOD_SERVICE));
+//        if (getWindow().getAttributes().softInputMode != WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN) {
+//            if (getCurrentFocus() != null)
+//                manager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+//        }
+//    }
+//
+//    /**
+//     * 弹出输入法窗口
+//     */
+//    public void showSoftInputView(final EditText et) {
+//        new Handler().postDelayed(new Runnable() {
+//            @Override
+//            public void run() {
+//                ((InputMethodManager) et.getContext().getSystemService(Service.INPUT_METHOD_SERVICE)).toggleSoftInput(0, InputMethodManager.HIDE_NOT_ALWAYS);
+//            }
+//        }, 0);
+//    }
 }

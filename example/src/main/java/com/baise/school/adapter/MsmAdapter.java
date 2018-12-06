@@ -17,8 +17,8 @@ public class MsmAdapter extends BaseMultiItemQuickAdapter<MsmEntity, BaseViewHol
 
     public MsmAdapter() {
         super(null);
-        addItemType(SEND, R.layout.left);
-        addItemType(RECEIVER, R.layout.right);
+        addItemType(RECEIVER, R.layout.left);
+        addItemType(SEND, R.layout.right);
     }
 
 
