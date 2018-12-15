@@ -1,4 +1,5 @@
 apply plugin: 'com.android.application'
+apply plugin: 'org.greenrobot.greendao' // greenDao数据库 plugin
 
 android {
     compileSdkVersion 27
@@ -29,6 +30,16 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+
+    greendao{
+        //指定数据库schema版本号，迁移等操作会用到;
+        schemaVersion 1
+        //dao的包名，包名默认是entity所在的包；
+        daoPackage 'com.baise.school.db'
+        //生成数据库文件的目录;
+        targetGenDir 'src/main/java'
+    }
+
 }
 
 dependencies {
@@ -41,5 +52,7 @@ dependencies {
     /* 底部菜单 */
     implementation 'com.flyco.tablayout:FlycoTabLayout_Lib:2.1.2@aar'
 
+    //greendao数据库
+    api 'org.greenrobot:greendao:3.2.2' // add library
 }
 

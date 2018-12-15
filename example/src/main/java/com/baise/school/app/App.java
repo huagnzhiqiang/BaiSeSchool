@@ -5,6 +5,10 @@ import android.support.multidex.MultiDex;
 
 import com.baise.baselibs.app.BaseApplication;
 import com.baise.baselibs.utils.CommonUtils;
+import com.baise.school.db.DaoMaster;
+import com.baise.school.db.DaoSession;
+
+import org.greenrobot.greendao.database.Database;
 
 /**
  * @author 小强
@@ -13,6 +17,7 @@ import com.baise.baselibs.utils.CommonUtils;
  */
 public class App extends BaseApplication {
 
+    private static DaoSession mDaoSession;
 
     @Override
     protected void attachBaseContext(Context base) {
@@ -28,8 +33,27 @@ public class App extends BaseApplication {
         initBugly();
 
 
+        //初始化数据库
+        initDB();
     }
 
+    /**
+     * 初始化数据库
+     */
+    private void initDB() {
+        DaoMaster.DevOpenHelper helper = new DaoMaster.DevOpenHelper(this, "BaiSeSchool.db");
+        Database db = helper.getWritableDb();
+        mDaoSession = new DaoMaster(db).newSession();
+    }
+
+    /**
+     * 获取数据库对象
+     * @return
+     */
+    public static DaoSession getDaoSession() {
+        return mDaoSession;
+
+    }
 
     private void initBugly() {
         // 获取当前包名

@@ -4,18 +4,21 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.view.KeyEvent;
 import android.widget.FrameLayout;
+import android.widget.Toast;
 
-import com.baise.school.ui.main.video.MsmFragment;
-import com.flyco.tablayout.CommonTabLayout;
-import com.flyco.tablayout.listener.CustomTabEntity;
-import com.flyco.tablayout.listener.OnTabSelectListener;
+import com.baise.baselibs.app.AppManager;
 import com.baise.baselibs.base.BaseMvpActivity;
 import com.baise.school.R;
 import com.baise.school.data.entity.TabEntity;
 import com.baise.school.data.entity.TestNews;
 import com.baise.school.ui.main.home.HomeFragment;
 import com.baise.school.ui.main.mine.MineFragment;
+import com.baise.school.ui.main.video.MsmFragment;
+import com.flyco.tablayout.CommonTabLayout;
+import com.flyco.tablayout.listener.CustomTabEntity;
+import com.flyco.tablayout.listener.OnTabSelectListener;
 import com.orhanobut.logger.Logger;
 
 import java.util.ArrayList;
@@ -34,7 +37,7 @@ public class MainActivity extends BaseMvpActivity<MainPresenter> implements Main
 
 
     private HomeFragment mHomeFragment;
-    private MsmFragment mVideoFragment;
+    private MsmFragment mMsmFragment;
     private MineFragment mMineFragment;
 
     // 顶部滑动的标签栏
@@ -88,10 +91,9 @@ public class MainActivity extends BaseMvpActivity<MainPresenter> implements Main
     protected void initImmersionBar() {
         super.initImmersionBar();
         mImmersionBar.fitsSystemWindows(false);
-//        mImmersionBar.keyboardEnable(true);  //解决软键盘与底部输入框冲突问题
+        //        mImmersionBar.keyboardEnable(true);  //解决软键盘与底部输入框冲突问题
         mImmersionBar.init();
     }
-
 
 
     /**
@@ -137,10 +139,10 @@ public class MainActivity extends BaseMvpActivity<MainPresenter> implements Main
         });
 
 
-//        //设备红点
-//        tabLayout.showDot(0);
-//        tabLayout.showMsg(1, 100);
-//        tabLayout.showDot(2);
+        //        //设备红点
+        //        tabLayout.showDot(0);
+        //        tabLayout.showMsg(1, 100);
+        //        tabLayout.showDot(2);
 
     }
 
@@ -164,11 +166,11 @@ public class MainActivity extends BaseMvpActivity<MainPresenter> implements Main
                 }
                 break;
             case 1: //视频
-                if (mVideoFragment == null) {
-                    mVideoFragment = MsmFragment.getInstance(mTitles[1]);
-                    transaction.add(R.id.fl_container, mVideoFragment, "video");
+                if (mMsmFragment == null) {
+                    mMsmFragment = MsmFragment.getInstance(mTitles[1]);
+                    transaction.add(R.id.fl_container, mMsmFragment, "video");
                 } else {
-                    transaction.show(mVideoFragment);
+                    transaction.show(mMsmFragment);
                 }
                 break;
 
@@ -204,8 +206,8 @@ public class MainActivity extends BaseMvpActivity<MainPresenter> implements Main
         if (null != mHomeFragment) {
             transaction.hide(mHomeFragment);
         }
-        if (null != mVideoFragment) {
-            transaction.hide(mVideoFragment);
+        if (null != mMsmFragment) {
+            transaction.hide(mMsmFragment);
         }
         if (null != mMineFragment) {
             transaction.hide(mMineFragment);
@@ -251,4 +253,23 @@ public class MainActivity extends BaseMvpActivity<MainPresenter> implements Main
     public void showNetworkError(String msg, int code) {
 
     }
+
+
+    private long exitTime = 0;
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_DOWN) {
+            if ((System.currentTimeMillis() - exitTime) > 2000) {
+                Toast.makeText(getApplicationContext(), "再按一次退出程序", Toast.LENGTH_SHORT).show();
+                exitTime = System.currentTimeMillis();
+            } else {
+                AppManager.getInstance().AppExit();
+            }
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+
+
 }

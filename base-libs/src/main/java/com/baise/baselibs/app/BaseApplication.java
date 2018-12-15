@@ -13,6 +13,7 @@ import com.orhanobut.logger.PrettyFormatStrategy;
 import com.squareup.leakcanary.LeakCanary;
 import com.squareup.leakcanary.RefWatcher;
 
+
 public class BaseApplication extends Application {
     private RefWatcher mRefWatcher;
     private static Context mContext;
@@ -30,12 +31,13 @@ public class BaseApplication extends Application {
 
         //创建日志
         initLogger();
+
     }
+
 
     public static Context getContext() {
         return mContext;
     }
-
 
 
     private void initLeakCanary() {
