@@ -5,7 +5,7 @@ package com.baise.school.data.entity;
  * @time 2018/12/5  16:11
  * @desc
  */
-public class MsnBean {
+public class MsgBean {
 
 
     /**
@@ -34,6 +34,6 @@ public class MsnBean {
 
     @Override
     public String toString() {
-        return "MsnBean{" + "code=" + code + ", text='" + text + '\'' + '}';
+        return "MsgBean{" + "code=" + code + ", text='" + text + '\'' + '}';
     }
 }

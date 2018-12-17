@@ -14,15 +14,16 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.gyf.barlibrary.ImmersionBar;
 import com.baise.baselibs.Bean.MessageEvent;
 import com.baise.baselibs.R;
 import com.baise.baselibs.app.BaseApplication;
 import com.baise.baselibs.mvp.BasePresenter;
 import com.baise.baselibs.mvp.IView;
 import com.baise.baselibs.view.MultipleStatusView;
+import com.gyf.barlibrary.ImmersionBar;
 import com.orhanobut.logger.Logger;
 import com.squareup.leakcanary.RefWatcher;
+import com.trello.rxlifecycle2.LifecycleProvider;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -433,5 +434,13 @@ public abstract class BaseFragment<T extends BasePresenter> extends BaseLazyFrag
         }
     };
 
+
+    protected <T> LifecycleProvider<T> getLifecycleProvider() {
+        LifecycleProvider<T> provider = null;
+        if (null != this && this instanceof LifecycleProvider) {
+            provider = (LifecycleProvider<T>) this;
+        }
+        return provider;
+    }
 
 }

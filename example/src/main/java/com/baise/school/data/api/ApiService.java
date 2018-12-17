@@ -3,7 +3,7 @@ package com.baise.school.data.api;
 import com.baise.baselibs.net.BaseHttpResult;
 import com.baise.school.data.entity.LoginEntity;
 import com.baise.school.data.entity.MineEntity;
-import com.baise.school.data.entity.MsnBean;
+import com.baise.school.data.entity.MsgBean;
 import com.baise.school.data.entity.TestNews;
 
 import java.util.List;
@@ -38,5 +38,5 @@ public interface ApiService {
 
     //获取聊天
     @GET
-    Observable<MsnBean> requestSmsData(@Url String url, @QueryMap Map<String,String> map);
+    Observable<MsgBean> requestNewsData(@Url String url, @QueryMap Map<String,String> map);
 }

@@ -1,7 +1,7 @@
 package com.baise.school.adapter;
 
 import com.baise.school.R;
-import com.baise.school.data.entity.MsmEntity;
+import com.baise.school.data.entity.NewsEntity;
 import com.chad.library.adapter.base.BaseMultiItemQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 
@@ -10,7 +10,7 @@ import com.chad.library.adapter.base.BaseViewHolder;
  * @time 2018/12/5  14:24
  * @desc 发送短信适配器
  */
-public class MsmAdapter extends BaseMultiItemQuickAdapter<MsmEntity, BaseViewHolder> {
+public class MsmAdapter extends BaseMultiItemQuickAdapter<NewsEntity, BaseViewHolder> {
 
     public static final int SEND = 1;
     public static final int RECEIVER = 2;
@@ -23,7 +23,7 @@ public class MsmAdapter extends BaseMultiItemQuickAdapter<MsmEntity, BaseViewHol
 
 
     @Override
-    protected void convert(BaseViewHolder helper, MsmEntity item) {
+    protected void convert(BaseViewHolder helper, NewsEntity item) {
 
 
         switch (helper.getItemViewType()) {

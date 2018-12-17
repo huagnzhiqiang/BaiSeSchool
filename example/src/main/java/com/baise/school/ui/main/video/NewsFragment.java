@@ -16,37 +16,30 @@ import com.baise.baselibs.utils.ToastUtils;
 import com.baise.school.R;
 import com.baise.school.adapter.MsmAdapter;
 import com.baise.school.app.App;
-import com.baise.school.data.entity.MsmEntity;
-import com.baise.school.data.entity.MsnBean;
-import com.baise.school.data.repository.RetrofitUtils;
+import com.baise.school.data.entity.MsgBean;
+import com.baise.school.data.entity.NewsEntity;
 import com.baise.school.db.DaoSession;
-import com.baise.school.db.MsmEntityDao;
+import com.baise.school.db.NewsEntityDao;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.loadmore.SimpleLoadMoreView;
-import com.orhanobut.logger.Logger;
 
 import org.greenrobot.greendao.query.Query;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.OnClick;
-import io.reactivex.Observer;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.schedulers.Schedulers;
 
 /**
  * @author 小强
  * @time 2018/6/12 22:57
  * @desc 我的
  */
-public class MsmFragment extends BaseFragment<VideoPresenter> {
+public class NewsFragment extends BaseFragment<NewsPresenter> implements NewsContract.View {
 
 
     @BindView(R.id.recycler_view) RecyclerView mRecyclerView;
@@ -58,12 +51,13 @@ public class MsmFragment extends BaseFragment<VideoPresenter> {
 
     private double currentTime = 0, oldTime = 0;
 
-    private List<MsmEntity> mEntityList = new LinkedList<>();
-    private MsmEntityDao mMsmEntityDao;
-    private Query<MsmEntity> mMsmEntityQuery;
+    private NewsEntityDao mMsmEntityDao;
+    private Query<NewsEntity> mMsmEntityQuery;
 
-    public static MsmFragment getInstance(String title) {
-        MsmFragment fragment = new MsmFragment();
+    private String[] defaultNest = {"百色学院地址", "地址", "百色学院", "百色", "学院"};
+
+    public static NewsFragment getInstance(String title) {
+        NewsFragment fragment = new NewsFragment();
         Bundle bundle = new Bundle();
         fragment.setArguments(bundle);
         fragment.mTitle = title;
@@ -76,8 +70,8 @@ public class MsmFragment extends BaseFragment<VideoPresenter> {
     }
 
     @Override
-    protected VideoPresenter createPresenter() {
-        return new VideoPresenter();
+    protected NewsPresenter createPresenter() {
+        return new NewsPresenter();
     }
 
 
@@ -112,8 +106,8 @@ public class MsmFragment extends BaseFragment<VideoPresenter> {
         DaoSession daoSession = App.getDaoSession();
 
 
-        mMsmEntityDao = daoSession.getMsmEntityDao();
-        mMsmEntityQuery = mMsmEntityDao.queryBuilder().orderAsc(MsmEntityDao.Properties.Id).build();
+        mMsmEntityDao = daoSession.getNewsEntityDao();
+        mMsmEntityQuery = mMsmEntityDao.queryBuilder().orderAsc(NewsEntityDao.Properties.Id).build();
         initAdapter();
 
     }
@@ -121,7 +115,7 @@ public class MsmFragment extends BaseFragment<VideoPresenter> {
 
     //插入数据
     private void insertMsm(int type, String content, String date) {
-        MsmEntity msmEntity = new MsmEntity(null,content,date,type);
+        NewsEntity msmEntity = new NewsEntity(null, content, date, type);
         mMsmEntityDao.insert(msmEntity);
     }
 
@@ -131,7 +125,7 @@ public class MsmFragment extends BaseFragment<VideoPresenter> {
      *
      * @return 数据库聊天所有数据
      */
-    private List<MsmEntity> queryList() {
+    private List<NewsEntity> queryList() {
         return mMsmEntityQuery.list();
     }
 
@@ -156,11 +150,8 @@ public class MsmFragment extends BaseFragment<VideoPresenter> {
         mAdapter.setLoadMoreView(new SimpleLoadMoreView());
 
         if (mAdapter != null) {
-//            insertMsm(MsmAdapter.RECEIVER, "欢迎来到百色学院", getTime());
-//            MsmEntity entity = new MsmEntity().setContent("欢迎来到百色学院").setTime(getTime()).setType(MsmAdapter.RECEIVER);
-//            mAdapter.addData(entity);
 
-            List<MsmEntity> msgEntities = queryList();
+            List<NewsEntity> msgEntities = queryList();
             mAdapter.addData(msgEntities);
             mRecyclerView.scrollToPosition(mAdapter.getItemCount() - 1);
         }
@@ -172,46 +163,25 @@ public class MsmFragment extends BaseFragment<VideoPresenter> {
 
         String msg = mSendText.getText().toString().trim();
         if (!TextUtils.isEmpty(msg)) {
-            MsmEntity entity;
+            NewsEntity entity;
             if (mAdapter != null) {
+
                 mSendText.setText("");
-                entity = new MsmEntity().setContent(msg).setTime(getTime()).setType(MsmAdapter.SEND);
+                entity = new NewsEntity().setContent(msg).setTime(getTime()).setType(MsmAdapter.SEND);
                 mAdapter.addData(entity);
                 insertMsm(MsmAdapter.SEND, msg, getTime());
-
                 mRecyclerView.scrollToPosition(mAdapter.getItemCount() - 1);
 
-                if (msg.equals("百色学院地址")) {
-                    String s = "广西百色中山二路21号。";
-                    insertMsm(MsmAdapter.RECEIVER, s, getTime());
+                int length = defaultNest.length;
 
-
-                    entity = new MsmEntity().setContent(s).setTime(getTime()).setType(MsmAdapter.RECEIVER);
-                    mAdapter.addData(entity);
-                    mRecyclerView.scrollToPosition(mAdapter.getItemCount() - 1);
-
-                } else if (msg.equals("百色学院")) {
-                    String s = "东合校区：广西百色中山二路21号,澄碧校区：324国道百色学院澄碧校区(东南门)附近";
-
-                    insertMsm(MsmAdapter.RECEIVER, s, getTime());
-
-
-                    entity = new MsmEntity().setContent(s).setTime(getTime()).setType(MsmAdapter.RECEIVER);
-                    mAdapter.addData(entity);
-                    mRecyclerView.scrollToPosition(mAdapter.getItemCount() - 1);
-
-                } else if (msg.equals("百色学院简介")) {
-                    String s = "百色学院是2006年教育部批准成立的实行“区市共建、以市为主”办学体制的普通本科高校。77年来，学校坚持在“老、少、边、山、穷、库”地区办学，凝练了“团结合作、艰苦奋斗、克难攻坚、磨砺成才”的“石磨精神”，走出一条艰苦创业的发展之路，为边疆民族地区的经济发展、社会进步和国防巩固作出巨大贡献。";
-                    insertMsm(MsmAdapter.RECEIVER, s, getTime());
-
-                    entity = new MsmEntity().setContent(s).setTime(getTime()).setType(MsmAdapter.RECEIVER);
-                    mAdapter.addData(entity);
-                    mRecyclerView.scrollToPosition(mAdapter.getItemCount() - 1);
-
-                } else {
-                    senSms(msg);
+                for (int i = 0; i < length; i++) {
+                    String news = defaultNest[i];
+                    if (msg.equals(news)) {
+                        mPresenter.requestData(msg);
+                        return;
+                    }
                 }
-
+                senNews(msg);
             }
 
 
@@ -220,8 +190,12 @@ public class MsmFragment extends BaseFragment<VideoPresenter> {
         }
     }
 
-
-    public void senSms(String msg) {
+    /**
+     * 请求数据
+     *
+     * @param msg 请求的消息
+     */
+    public void senNews(String msg) {
 
         Map<String, String> map = new HashMap<>();
 
@@ -229,48 +203,13 @@ public class MsmFragment extends BaseFragment<VideoPresenter> {
         map.put("key", "e2109786d8d4593345fb3b75e65089c0");
         map.put("info", msg);
 
-        RetrofitUtils.getHttpService().requestSmsData(url, map).subscribeOn(Schedulers.io()).
-                observeOn(Schedulers.io()).
-                observeOn(AndroidSchedulers.mainThread()).
-                subscribe(new Observer<MsnBean>() {
-                    @Override
-                    public void onSubscribe(Disposable d) {
-
-                    }
-
-                    @Override
-                    public void onNext(MsnBean s) {
-
-
-                        if (mAdapter != null) {
-                            MsmEntity entity = new MsmEntity().setContent(s.getText()).setTime(getTime()).setType(MsmAdapter.RECEIVER);
-                            mAdapter.addData(entity);
-
-                            insertMsm(MsmAdapter.RECEIVER, s.getText(), getTime());
-
-                            mRecyclerView.scrollToPosition(mAdapter.getItemCount() - 1);
-                        }
-                        Logger.d("onError--->:" + s.toString());
-
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        Logger.d("onError--->:" + e.getMessage());
-                    }
-
-                    @Override
-                    public void onComplete() {
-
-                    }
-                });
+        mPresenter.requestData(url, map);
 
 
     }
 
 
     private String getTime() {
-
         currentTime = System.currentTimeMillis();
         SimpleDateFormat format = new SimpleDateFormat("yyyy年MM月dd日 HH:mm:ss");
         Date curDate = new Date();
@@ -313,6 +252,24 @@ public class MsmFragment extends BaseFragment<VideoPresenter> {
     @Override
     public void showNetworkError(String msg, int code) {
 
+    }
+
+    /**
+     * 显示发送显示回来的信息
+     */
+    @Override
+    public void ShowNewsData(MsgBean data) {
+        if (mAdapter != null) {
+
+            //添加到Adapter
+            NewsEntity entity = new NewsEntity().setContent(data.getText()).setTime(getTime()).setType(MsmAdapter.RECEIVER);
+            mAdapter.addData(entity);
+            mRecyclerView.scrollToPosition(mAdapter.getItemCount() - 1);
+
+            //添加到数据库
+            insertMsm(MsmAdapter.RECEIVER, data.getText(), getTime());
+
+        }
     }
 
 

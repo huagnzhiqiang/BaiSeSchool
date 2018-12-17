@@ -15,7 +15,7 @@ import com.baise.school.data.entity.TabEntity;
 import com.baise.school.data.entity.TestNews;
 import com.baise.school.ui.main.home.HomeFragment;
 import com.baise.school.ui.main.mine.MineFragment;
-import com.baise.school.ui.main.video.MsmFragment;
+import com.baise.school.ui.main.video.NewsFragment;
 import com.flyco.tablayout.CommonTabLayout;
 import com.flyco.tablayout.listener.CustomTabEntity;
 import com.flyco.tablayout.listener.OnTabSelectListener;
@@ -37,7 +37,7 @@ public class MainActivity extends BaseMvpActivity<MainPresenter> implements Main
 
 
     private HomeFragment mHomeFragment;
-    private MsmFragment mMsmFragment;
+    private NewsFragment mMsmFragment;
     private MineFragment mMineFragment;
 
     // 顶部滑动的标签栏
@@ -167,7 +167,7 @@ public class MainActivity extends BaseMvpActivity<MainPresenter> implements Main
                 break;
             case 1: //视频
                 if (mMsmFragment == null) {
-                    mMsmFragment = MsmFragment.getInstance(mTitles[1]);
+                    mMsmFragment = NewsFragment.getInstance(mTitles[1]);
                     transaction.add(R.id.fl_container, mMsmFragment, "video");
                 } else {
                     transaction.show(mMsmFragment);
