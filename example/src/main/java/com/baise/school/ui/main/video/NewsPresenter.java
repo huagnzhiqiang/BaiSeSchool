@@ -55,7 +55,7 @@ public class NewsPresenter extends BasePresenter<NewsContract.Model,NewsContract
 
         if (msg.equals("百色学院地址") || msg.equals("地址")) {
             resuleMsg = "广西百色中山二路21号。";
-        } else if (msg.equals("百色学院") || msg.equals("百色") || msg.equals("学院")) {
+        } else if (msg.equals("百色学院") || msg.equals("学院")) {
             resuleMsg = "东合校区：广西百色中山二路21号,澄碧校区：324国道百色学院澄碧校区(东南门)附近";
 
         } else if (msg.equals("百色学院简介")) {
