@@ -1,10 +1,15 @@
 package com.baise.school.ui.main;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.view.KeyEvent;
+import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.Toast;
 
@@ -67,7 +72,29 @@ public class MainActivity extends BaseMvpActivity<MainPresenter> implements Main
         }
         tabLayout.setCurrentTab(mCurrIndex);
         switchFragment(mCurrIndex);
+
+        requestPermissions();
     }
+
+
+    private void requestPermissions() {
+        try {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                int permission = ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+                if (permission != PackageManager.PERMISSION_GRANTED) {
+                    ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.LOCATION_HARDWARE, Manifest.permission.READ_PHONE_STATE, Manifest.permission.WRITE_SETTINGS, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.RECORD_AUDIO, Manifest.permission.READ_CONTACTS}, 0x0010);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    }
+
 
     @Override
     protected int getLayoutId() {
@@ -91,7 +118,9 @@ public class MainActivity extends BaseMvpActivity<MainPresenter> implements Main
     protected void initImmersionBar() {
         super.initImmersionBar();
         mImmersionBar.fitsSystemWindows(false);
-        //        mImmersionBar.keyboardEnable(true);  //解决软键盘与底部输入框冲突问题
+        mImmersionBar.keyboardEnable(true);  //解决软键盘与底部输入框冲突问题
+        mImmersionBar.fullScreen(true);
+        mImmersionBar.keyboardMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);  //单独指定软键盘模式
         mImmersionBar.init();
     }
 

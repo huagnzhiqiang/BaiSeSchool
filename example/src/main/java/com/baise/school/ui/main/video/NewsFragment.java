@@ -7,21 +7,30 @@ import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.baise.baselibs.base.BaseFragment;
+import com.baise.baselibs.utils.GsonUtil;
 import com.baise.baselibs.utils.ToastUtils;
 import com.baise.school.R;
 import com.baise.school.adapter.MsmAdapter;
 import com.baise.school.app.App;
 import com.baise.school.data.entity.MsgBean;
 import com.baise.school.data.entity.NewsEntity;
+import com.baise.school.data.entity.RecognizerResultEntity;
 import com.baise.school.db.DaoSession;
 import com.baise.school.db.NewsEntityDao;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.loadmore.SimpleLoadMoreView;
+import com.gyf.barlibrary.ImmersionBar;
+import com.iflytek.cloud.RecognizerResult;
+import com.iflytek.cloud.SpeechConstant;
+import com.iflytek.cloud.SpeechError;
+import com.iflytek.cloud.ui.RecognizerDialog;
+import com.iflytek.cloud.ui.RecognizerDialogListener;
 
 import org.greenrobot.greendao.query.Query;
 
@@ -55,6 +64,7 @@ public class NewsFragment extends BaseFragment<NewsPresenter> implements NewsCon
     private Query<NewsEntity> mMsmEntityQuery;
 
     private String[] defaultNest = {"百色学院地址", "地址", "百色学院", "百色", "学院"};
+
 
     public static NewsFragment getInstance(String title) {
         NewsFragment fragment = new NewsFragment();
@@ -104,8 +114,6 @@ public class NewsFragment extends BaseFragment<NewsPresenter> implements NewsCon
     protected void initData() {
 
         DaoSession daoSession = App.getDaoSession();
-
-
         mMsmEntityDao = daoSession.getNewsEntityDao();
         mMsmEntityQuery = mMsmEntityDao.queryBuilder().orderAsc(NewsEntityDao.Properties.Id).build();
         initAdapter();
@@ -134,9 +142,12 @@ public class NewsFragment extends BaseFragment<NewsPresenter> implements NewsCon
      */
     @Override
     protected void initImmersionBar() {
-        super.initImmersionBar();
+        mImmersionBar = ImmersionBar.with(this);
         mImmersionBar.fitsSystemWindows(false);
         mImmersionBar.keyboardEnable(true);  //解决软键盘与底部输入框冲突问题
+        mImmersionBar.statusBarColor(R.color.colorAccent);
+        mImmersionBar.keyboardMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);  //单独指定软键盘模式
+        mImmersionBar.navigationBarWithKitkatEnable(false);
         mImmersionBar.init();
     }
 
@@ -158,37 +169,117 @@ public class NewsFragment extends BaseFragment<NewsPresenter> implements NewsCon
     }
 
 
-    @OnClick(R.id.tv_send_sms)
-    public void onClick() {
+    @OnClick({R.id.tv_send_sms, R.id.iv_send})
+    public void onClick(View view) {
 
-        String msg = mSendText.getText().toString().trim();
-        if (!TextUtils.isEmpty(msg)) {
-            NewsEntity entity;
-            if (mAdapter != null) {
+        switch (view.getId()) {
+            case R.id.tv_send_sms:
 
+                String msg = mSendText.getText().toString().trim();
+
+                if (!TextUtils.isEmpty(msg)) {
+                    NewsEntity entity;
+                    if (mAdapter != null) {
+
+                        //发送
+                        mSendText.setText("");
+                        entity = new NewsEntity().setContent(msg).setTime(getTime()).setType(MsmAdapter.SEND);
+                        mAdapter.addData(entity);
+                        insertMsm(MsmAdapter.SEND, msg, getTime());
+                        mRecyclerView.scrollToPosition(mAdapter.getItemCount() - 1);
+
+                        int length = defaultNest.length;
+
+                        for (int i = 0; i < length; i++) {
+                            String news = defaultNest[i];
+                            if (msg.equals(news)) {
+                                mPresenter.requestData(msg);
+                                return;
+                            }
+                        }
+                        senNews(msg);
+                    }
+
+
+                } else {
+                    ToastUtils.showShort("快来问我问题吧");
+                }
+
+                break;
+
+            case R.id.iv_send:
+
+
+                onRecognise();
+
+
+                break;
+        }
+
+
+    }
+
+    public void onRecognise() {
+        //1.创建RecognizerDialog对象
+        RecognizerDialog mDialog = new RecognizerDialog(getContext(), null);
+        //2.设置accent、 language等参数
+        mDialog.setParameter(SpeechConstant.LANGUAGE, "zh_cn");
+        mDialog.setParameter(SpeechConstant.ACCENT, "mandarin");
+        //若要将UI控件用于语义理解，必须添加以下参数设置，设置之后onResult回调返回将是语义理解
+        //结果
+        // mDialog.setParameter("asr_sch", "1");
+        // mDialog.setParameter("nlp_version", "2.0");
+        //3.设置回调接口
+        mDialog.setListener(mRecognizerDialogListener);
+        //4.显示dialog，接收语音输入
+        mDialog.show();
+    }
+
+
+    //讯飞语音
+    private RecognizerDialogListener mRecognizerDialogListener = new RecognizerDialogListener() {
+
+        /**
+         *
+         * @param recognizerResult 语音识别结果
+         * @param b true表示是标点符号
+         */
+        @Override
+        public void onResult(RecognizerResult recognizerResult, boolean b) {
+            if (b) {
+                return;
+            }
+            RecognizerResultEntity resultEntity = GsonUtil.fromJson(recognizerResult.getResultString(), RecognizerResultEntity.class);
+
+            List<RecognizerResultEntity.WsBean> ws = resultEntity.getWs();
+            int size = ws.size();
+            String msg = "";
+            for (int i = 0; i < size; i++) {
+                List<RecognizerResultEntity.WsBean.CwBean> cw = ws.get(i).getCw();
+                for (int j = 0; j < cw.size(); j++) {
+                    msg += cw.get(j).getW();
+                }
+            }
+            if (mAdapter != null && !TextUtils.isEmpty(msg)) {
+
+                //发送
                 mSendText.setText("");
-                entity = new NewsEntity().setContent(msg).setTime(getTime()).setType(MsmAdapter.SEND);
+                NewsEntity entity = new NewsEntity().setContent(msg).setTime(getTime()).setType(MsmAdapter.SEND);
                 mAdapter.addData(entity);
                 insertMsm(MsmAdapter.SEND, msg, getTime());
                 mRecyclerView.scrollToPosition(mAdapter.getItemCount() - 1);
 
-                int length = defaultNest.length;
-
-                for (int i = 0; i < length; i++) {
-                    String news = defaultNest[i];
-                    if (msg.equals(news)) {
-                        mPresenter.requestData(msg);
-                        return;
-                    }
-                }
                 senNews(msg);
+
             }
-
-
-        } else {
-            ToastUtils.showShort("快来问我问题吧");
         }
-    }
+
+        @Override
+        public void onError(SpeechError speechError) {
+
+        }
+    };
+
 
     /**
      * 请求数据
@@ -204,7 +295,6 @@ public class NewsFragment extends BaseFragment<NewsPresenter> implements NewsCon
         map.put("info", msg);
 
         mPresenter.requestData(url, map);
-
 
     }
 
@@ -273,32 +363,32 @@ public class NewsFragment extends BaseFragment<NewsPresenter> implements NewsCon
     }
 
 
-    //    /**
-    //     * 隐藏软键盘
-    //     * hideSoftInputView
-    //     *
-    //     * @param
-    //     * @return void
-    //     * @throws
-    //     * @Title: hideSoftInputView
-    //     */
-    //    public void hideSoftInputView() {
-    //        InputMethodManager manager = ((InputMethodManager) this.getSystemService(Activity.INPUT_METHOD_SERVICE));
-    //        if (getWindow().getAttributes().softInputMode != WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN) {
-    //            if (getCurrentFocus() != null)
-    //                manager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
-    //        }
-    //    }
-    //
-    //    /**
-    //     * 弹出输入法窗口
-    //     */
-    //    public void showSoftInputView(final EditText et) {
-    //        new Handler().postDelayed(new Runnable() {
-    //            @Override
-    //            public void run() {
-    //                ((InputMethodManager) et.getContext().getSystemService(Service.INPUT_METHOD_SERVICE)).toggleSoftInput(0, InputMethodManager.HIDE_NOT_ALWAYS);
+    //        /**
+    //         * 隐藏软键盘
+    //         * hideSoftInputView
+    //         *
+    //         * @param
+    //         * @return void
+    //         * @throws
+    //         * @Title: hideSoftInputView
+    //         */
+    //        public void hideSoftInputView() {
+    //            InputMethodManager manager = ((InputMethodManager) getActivity().getSystemService(Activity.INPUT_METHOD_SERVICE));
+    //            if (getActivity().getWindow().getAttributes().softInputMode != WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN) {
+    //                if (getCurrentFocus() != null)
+    //                    manager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
     //            }
-    //        }, 0);
-    //    }
+    //        }
+    //
+    //        /**
+    //         * 弹出输入法窗口
+    //         */
+    //        public void showSoftInputView(final EditText et) {
+    //            new Handler().postDelayed(new Runnable() {
+    //                @Override
+    //                public void run() {
+    //                    ((InputMethodManager) et.getContext().getSystemService(Service.INPUT_METHOD_SERVICE)).toggleSoftInput(0, InputMethodManager.HIDE_NOT_ALWAYS);
+    //                }
+    //            }, 0);
+    //        }
 }

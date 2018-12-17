@@ -40,6 +40,12 @@ android {
         targetGenDir 'src/main/java'
     }
 
+    sourceSets {
+        main{
+            jniLibs.srcDirs = ['libs']
+        }
+    }
+
 }
 
 dependencies {
@@ -51,8 +57,8 @@ dependencies {
     implementation project(':base-libs')
     /* 底部菜单 */
     implementation 'com.flyco.tablayout:FlycoTabLayout_Lib:2.1.2@aar'
-
     //greendao数据库
-    api 'org.greenrobot:greendao:3.2.2' // add library
+    api 'org.greenrobot:greendao:3.2.2'
+    implementation files('libs/Msc.jar')
 }
 

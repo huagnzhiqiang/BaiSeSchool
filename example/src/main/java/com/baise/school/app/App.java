@@ -3,10 +3,12 @@ package com.baise.school.app;
 import android.content.Context;
 import android.support.multidex.MultiDex;
 
+import com.baise.baselibs.app.AppConstants;
 import com.baise.baselibs.app.BaseApplication;
 import com.baise.baselibs.utils.CommonUtils;
 import com.baise.school.db.DaoMaster;
 import com.baise.school.db.DaoSession;
+import com.iflytek.cloud.SpeechUtility;
 
 import org.greenrobot.greendao.database.Database;
 
@@ -35,6 +37,10 @@ public class App extends BaseApplication {
 
         //初始化数据库
         initDB();
+
+        SpeechUtility.createUtility(this, "appid=" + AppConstants.XF_VOICE_APPID);
+
+
     }
 
     /**

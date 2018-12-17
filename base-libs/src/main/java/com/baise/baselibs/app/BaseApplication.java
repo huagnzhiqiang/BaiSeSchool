@@ -5,6 +5,7 @@ import android.app.Application;
 import android.content.Context;
 import android.os.Bundle;
 
+import com.baise.baselibs.utils.SpUtil;
 import com.baise.baselibs.utils.cache.CacheManager;
 import com.orhanobut.logger.AndroidLogAdapter;
 import com.orhanobut.logger.FormatStrategy;
@@ -31,6 +32,9 @@ public class BaseApplication extends Application {
 
         //创建日志
         initLogger();
+
+        //初始化SharedPreferences
+        SpUtil.instance(this);
 
     }
 
