@@ -14,15 +14,19 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.baise.baselibs.Bean.MessageEvent;
 import com.baise.baselibs.app.AppConstants;
 import com.baise.baselibs.base.BaseFragment;
+import com.baise.baselibs.rx.RxBus;
 import com.baise.baselibs.utils.GsonUtil;
+import com.baise.baselibs.utils.SpUtil;
 import com.baise.baselibs.utils.ToastUtils;
 import com.baise.baselibs.utils.permission.PermissionListener;
 import com.baise.baselibs.utils.permission.PermissionsUtil;
 import com.baise.school.R;
 import com.baise.school.adapter.MsmAdapter;
 import com.baise.school.app.App;
+import com.baise.school.constants.EventBusTag;
 import com.baise.school.data.entity.MsgBean;
 import com.baise.school.data.entity.NewsEntity;
 import com.baise.school.data.entity.RecognizerResultEntity;
@@ -37,6 +41,7 @@ import com.iflytek.cloud.SpeechError;
 import com.iflytek.cloud.SpeechSynthesizer;
 import com.iflytek.cloud.ui.RecognizerDialog;
 import com.iflytek.cloud.ui.RecognizerDialogListener;
+import com.orhanobut.logger.Logger;
 
 import org.greenrobot.greendao.query.Query;
 
@@ -48,6 +53,7 @@ import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import io.reactivex.functions.Consumer;
 
 /**
  * @author 小强
@@ -70,6 +76,7 @@ public class NewsFragment extends BaseFragment<NewsPresenter> implements NewsCon
     private Query<NewsEntity> mMsmEntityQuery;
 
     private String[] defaultNest = {"百色学院地址", "地址", "百色学院", "百色", "学院"};
+    private SpeechSynthesizer mTts;
 
 
     public static NewsFragment getInstance(String title) {
@@ -124,6 +131,19 @@ public class NewsFragment extends BaseFragment<NewsPresenter> implements NewsCon
         mMsmEntityQuery = mMsmEntityDao.queryBuilder().orderAsc(NewsEntityDao.Properties.Id).build();
         initAdapter();
 
+
+        mPresenter.addDispose(RxBus.getDefault().toObservable(MessageEvent.class).subscribe(new Consumer<MessageEvent>() {
+            @Override
+            public void accept(MessageEvent messageEvent) throws Exception {
+
+                if (messageEvent.getTag().equals(EventBusTag.CLEAN_NEWS)) {
+
+                    Logger.d("accept--->:" + messageEvent.getTag());
+                    mMsmEntityDao.deleteAll();
+                    initAdapter();
+                }
+            }
+        }));
     }
 
 
@@ -249,12 +269,22 @@ public class NewsFragment extends BaseFragment<NewsPresenter> implements NewsCon
     }
 
 
+    /**
+     * 录音
+     */
     public void onRecognise() {
+
+        //获取录音语言
+        String record = SpUtil.getInstance().getString(AppConstants.XF_SET_VOICE_RECORD);
         //1.创建RecognizerDialog对象
         RecognizerDialog mDialog = new RecognizerDialog(getContext(), null);
         //2.设置accent、 language等参数
         mDialog.setParameter(SpeechConstant.LANGUAGE, "zh_cn");
-        mDialog.setParameter(SpeechConstant.ACCENT, "mandarin");
+        if (TextUtils.isEmpty(record)) {
+            mDialog.setParameter(SpeechConstant.ACCENT, "mandarin");//默认录音语言
+        } else {
+            mDialog.setParameter(SpeechConstant.ACCENT, record);
+        }
         //若要将UI控件用于语义理解，必须添加以下参数设置，设置之后onResult回调返回将是语义理解
         //结果
         // mDialog.setParameter("asr_sch", "1");
@@ -311,12 +341,27 @@ public class NewsFragment extends BaseFragment<NewsPresenter> implements NewsCon
     };
 
 
+    /**
+     * 朗读
+     *
+     * @param newsText 朗读的文字
+     */
     public void onSynthesize(String newsText) {
+
+        //获取朗读语言
+        String read = SpUtil.getInstance().getString(AppConstants.XF_SET_VOICE_READ);
+
         //1.创建 SpeechSynthesizer 对象, 第二个参数： 本地合成时传 InitListener
-        SpeechSynthesizer mTts = SpeechSynthesizer.createSynthesizer(getContext(), null);
+        mTts = SpeechSynthesizer.createSynthesizer(getContext(), null);
         //2.合成参数设置，详见《 MSC Reference Manual》 SpeechSynthesizer 类
         //设置发音人（更多在线发音人，用户可参见 附录13.2
-        mTts.setParameter(SpeechConstant.VOICE_NAME, "xiaoyan"); //设置发音人
+
+        if (TextUtils.isEmpty(read)) {
+            mTts.setParameter(SpeechConstant.VOICE_NAME, "xiaoyan"); //设置默认发音人
+        } else {
+            mTts.setParameter(SpeechConstant.VOICE_NAME, read); //设置发音人
+        }
+
         mTts.setParameter(SpeechConstant.SPEED, "50");//设置语速
         mTts.setParameter(SpeechConstant.VOLUME, "80");//设置音量，范围 0~100
         mTts.setParameter(SpeechConstant.ENGINE_TYPE, SpeechConstant.TYPE_CLOUD); //设置云端
@@ -327,6 +372,7 @@ public class NewsFragment extends BaseFragment<NewsPresenter> implements NewsCon
 
         //3.开始合成
         mTts.startSpeaking(newsText, null);
+
     }
 
 
@@ -407,7 +453,12 @@ public class NewsFragment extends BaseFragment<NewsPresenter> implements NewsCon
 
             //添加到数据库
             insertMsm(MsmAdapter.RECEIVER, data.getText(), getTime());
-            onSynthesize(data.getText());
+
+            //获取朗读设置
+            boolean reading = SpUtil.getInstance().getBoolean(AppConstants.READING);
+            if (!reading) {
+                onSynthesize(data.getText());
+            }
         }
     }
 
@@ -440,4 +491,23 @@ public class NewsFragment extends BaseFragment<NewsPresenter> implements NewsCon
     //                }
     //            }, 0);
     //        }
+
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        //停止朗读
+        mTts.destroy();
+    }
+
+
+    /**
+     * 加载过数据后，fragment变为不可见之后的需要执行的操作
+     */
+    @Override
+    public void InVisibleEvent() {
+        super.InVisibleEvent();
+        //停止朗读
+        mTts.destroy();
+    }
 }

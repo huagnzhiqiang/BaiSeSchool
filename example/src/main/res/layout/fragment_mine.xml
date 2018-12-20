@@ -1,43 +1,162 @@
 <?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:background="@android:color/white"
+              android:fitsSystemWindows="true"
+              android:orientation="vertical">
 
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content">
 
-    <com.baise.baselibs.view.MultipleStatusView
-        android:id="@+id/multipleStatusView"
+    <TextView
+        android:id="@+id/tv_clean_news"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:emptyView="@layout/layout_empty_view"
-        app:errorView="@layout/layout_error_view"
-        app:loadingView="@layout/layout_loading_view"
-        app:noNetworkView="@layout/layout_network_view">
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:padding="10dp"
+        android:text="清空聊天记录"
+        android:textColor="@color/item_text_confirm"
+        android:textSize="16sp"/>
 
 
-        <android.support.v7.widget.LinearLayoutCompat
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.1dp"
+        android:background="#D0D0D0"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:text="语音相关"
+        android:textColor="@color/item_text_color"
+        android:textSize="14sp"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.1dp"
+        android:background="#D0D0D0"/>
+
+    <RelativeLayout
+        android:id="@+id/rl_select_audio"
+        android:layout_width="fill_parent"
+        android:layout_height="45dp"
+        android:background="@drawable/item_selector"
+        android:longClickable="true">
+
+        <TextView
+            android:id="@+id/tv_select_audio"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="10.0dip"
+            android:text="录音语言：普通话"
+            android:textColor="#333333"
+            android:textSize="16sp"/>
+
+    </RelativeLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.1dp"
+        android:background="#D0D0D0"/>
+
+    <RelativeLayout
+        android:id="@+id/rl_select_reading"
+        android:layout_width="fill_parent"
+        android:layout_height="45dp"
+        android:background="@drawable/item_selector"
+        android:longClickable="true">
+
+        <TextView
+            android:id="@+id/tv_select_reading"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="10.0dip"
+            android:text="朗读语言：普通话"
+            android:textColor="#333333"
+            android:textSize="16sp"/>
+
+    </RelativeLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.1dp"
+        android:background="#D0D0D0"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:text="录音设置"
+        android:textColor="@color/item_text_color"
+        android:textSize="14sp"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.1dp"
+        android:background="#D0D0D0"/>
+
+    <RadioGroup
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <RadioButton
+            android:id="@+id/rb_voice"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
+            android:layout_height="45dp"
+            android:background="@drawable/item_selector"
+            android:checked="true"
+            android:text="录音以语音形式发送"
+            android:textColor="#000000"
+            android:textSize="14sp"/>
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="我的"/>
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0.1dp"
+            android:background="#D0D0D0"/>
 
-            <Button
-                android:id="@+id/get_btn"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="获取数据"/>
+        <RadioButton
+            android:id="@+id/rb_text"
+            android:layout_width="match_parent"
+            android:layout_height="45dp"
+            android:background="@drawable/item_selector"
+            android:text="录音以文字形式发送"
+            android:textColor="#000000"
+            android:textSize="14sp"/>
 
-            <Button
-                android:id="@+id/login_btn"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="登录"/>
-        </android.support.v7.widget.LinearLayoutCompat>
+    </RadioGroup>
 
-    </com.baise.baselibs.view.MultipleStatusView>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.1dp"
+        android:background="#D0D0D0"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:text="朗读设置"
+        android:textColor="@color/item_text_color"
+        android:textSize="14.0sp"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.1dp"
+        android:background="#D0D0D0"/>
+
+    <CheckBox
+        android:id="@+id/cb_speech"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:background="@drawable/item_selector"
+        android:text="回复内容直接朗读"
+        android:textColor="#000000"
+        android:textSize="14sp"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.1dp"
+        android:background="#D0D0D0"/>
 </LinearLayout>

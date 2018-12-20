@@ -44,9 +44,9 @@ public class MainActivity extends BaseMvpActivity<MainPresenter> implements Main
     // 顶部滑动的标签栏
     private String[] mTitles = {"学校", "趣味问答", "我的"};
     // 未被选中的图标
-    private int[] mIconUnSelectIds = {R.mipmap.ic_launcher, R.mipmap.ic_launcher, R.mipmap.ic_launcher};
+    private int[] mIconUnSelectIds = {R.drawable.school_nor, R.drawable.news_nor, R.drawable.my_nor};
     // 被选中的图标
-    private int[] mIconSelectIds = {R.mipmap.ic_launcher, R.mipmap.ic_launcher, R.mipmap.ic_launcher};
+    private int[] mIconSelectIds = {R.drawable.school_select, R.drawable.news_select, R.drawable.my_select};
 
     private ArrayList<CustomTabEntity> mTabEntities = new ArrayList<>();
     private ArrayList<Fragment> mFragments = new ArrayList<>();
