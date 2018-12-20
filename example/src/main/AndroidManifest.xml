@@ -3,10 +3,13 @@
           xmlns:tools="http://schemas.android.com/tools"
           package="com.baise.school">
 
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <!--解决版本号不一致问题-->
+    <uses-sdk tools:overrideLibrary="com.mylhyl.circledialog"/>
+
     <uses-permission android:name="android.permission.CALL_PHONE"/>
     <uses-permission android:name="android.permission.KILL_BACKGROUND_PROCESSES"/>
-    <uses-permission android:name="android.permission.INTERNET"/>
+
+
 
 
     <!--连接网络权限，用于执行云端语音能力 -->
@@ -29,6 +32,7 @@
         android:icon="@mipmap/logo"
         android:label="@string/app_name"
         android:supportsRtl="true"
+        tools:replace="android:name,android:icon,android:label,android:theme"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
         <activity
@@ -47,6 +51,9 @@
 
         <!--webView页面-->
         <activity android:name="com.baise.school.ui.main.WebViewActivity"/>
+
+        <!--权限页面-->
+        <activity android:name="com.baise.baselibs.utils.permission.PermissionActivity"/>
 
     </application>
 

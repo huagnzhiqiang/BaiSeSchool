@@ -3,6 +3,8 @@ package com.baise.baselibs.net;
 import com.baise.baselibs.app.AppConfig;
 import com.baise.baselibs.app.BaseApplication;
 import com.baise.baselibs.net.converter.GsonConverterBodyFactory;
+import com.baise.baselibs.net.cookie.CookieJarImpl;
+import com.baise.baselibs.net.cookie.store.PersistentCookieStore;
 import com.baise.baselibs.net.logcat.LoggerInterceptor;
 import com.baise.baselibs.utils.cache.CacheManager;
 
@@ -52,12 +54,13 @@ public class BaseRetrofit {
     public static HashMap<String, Object> getRequestParams() {
         HashMap<String, Object> parameters = new HashMap<>();
         parameters.put("_appversion", "");
-        parameters.put("_systemtype", "" );
-        parameters.put("_systemversion", "" );
-        parameters.put("_deviceid", "" );
-        parameters.put("_memberid", "" );
+        parameters.put("_systemtype", "");
+        parameters.put("_systemversion", "");
+        parameters.put("_deviceid", "");
+        parameters.put("_memberid", "");
         return parameters;
     }
+
     public static Retrofit getRetrofit() {
         if (retrofit == null) {
             synchronized (BaseRetrofit.class) {
@@ -71,14 +74,12 @@ public class BaseRetrofit {
                     File cacheFile = new File(BaseApplication.getContext().getCacheDir(), "cache");
                     Cache cache = new Cache(cacheFile, 1024 * 1024 * 50); //50Mb 缓存的大小
 
-                    client = new OkHttpClient
-                            .Builder()
-//                          .cookieJar(new CookieJarImpl(new PersistentCookieStore(App.getContext()))); //cookie 相关
-//                            .addInterceptor(httpLoggingInterceptor) //日志,所有的请求响应
-                              .addInterceptor(new LoggerInterceptor())
-//                            .addInterceptor(new HeaderInterceptor(getRequestHeader())) // token过滤
-//                            .addInterceptor(new ParameterInterceptor(getRequestParams()))  //公共参数添加
-//                            .addInterceptor(new CaheInterceptor(BaseApplication.getContext()))//缓存
+                    client = new OkHttpClient.Builder().cookieJar(new CookieJarImpl(new PersistentCookieStore(BaseApplication.getContext())))//cookie 相关
+                            //                            .addInterceptor(httpLoggingInterceptor) //日志,所有的请求响应
+                            .addInterceptor(new LoggerInterceptor())
+                            //                            .addInterceptor(new HeaderInterceptor(getRequestHeader())) // token过滤
+                            //                            .addInterceptor(new ParameterInterceptor(getRequestParams()))  //公共参数添加
+                            //                            .addInterceptor(new CaheInterceptor(BaseApplication.getContext()))//缓存
                             //不加以下两行代码,https请求不到自签名的服务器
                             .sslSocketFactory(createSSLSocketFactory())//创建一个证书对象
                             .hostnameVerifier(new TrustAllHostnameVerifier())//校验名称,这个对象就是信任所有的主机,也就是信任所有https的请求
@@ -87,18 +88,13 @@ public class BaseRetrofit {
                             .connectTimeout(15, TimeUnit.SECONDS)//连接超时时间
                             .readTimeout(15, TimeUnit.SECONDS)//读取超时时间
                             .writeTimeout(15, TimeUnit.SECONDS)//写入超时时间
-                            .retryOnConnectionFailure(false)//连接不上是否重连,false不重连
+                            .retryOnConnectionFailure(true)//连接不上是否重连,false不重连
 
                             .build();
 
                     // 获取retrofit的实例
-                    retrofit = new Retrofit
-                            .Builder()
-                            .baseUrl(AppConfig.BASE_URL)  //baseUrl配置
-                            .client(client)
-                            .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-                            .addConverterFactory(GsonConverterBodyFactory.create())
-                            .build();
+                    retrofit = new Retrofit.Builder().baseUrl(AppConfig.BASE_URL)  //baseUrl配置
+                            .client(client).addCallAdapterFactory(RxJava2CallAdapterFactory.create()).addConverterFactory(GsonConverterBodyFactory.create()).build();
                 }
             }
         }

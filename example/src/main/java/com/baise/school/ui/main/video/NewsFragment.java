@@ -1,6 +1,8 @@
 package com.baise.school.ui.main.video;
 
+import android.Manifest;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
@@ -16,6 +18,8 @@ import com.baise.baselibs.app.AppConstants;
 import com.baise.baselibs.base.BaseFragment;
 import com.baise.baselibs.utils.GsonUtil;
 import com.baise.baselibs.utils.ToastUtils;
+import com.baise.baselibs.utils.permission.PermissionListener;
+import com.baise.baselibs.utils.permission.PermissionsUtil;
 import com.baise.school.R;
 import com.baise.school.adapter.MsmAdapter;
 import com.baise.school.app.App;
@@ -212,14 +216,38 @@ public class NewsFragment extends BaseFragment<NewsPresenter> implements NewsCon
             case R.id.iv_send:
 
 
-                onRecognise();
-
+                requestWriteExternaLStorage();
 
                 break;
         }
 
 
     }
+
+
+    /**
+     * ==================获取读写权限=====================
+     */
+    private void requestWriteExternaLStorage() {
+
+
+        PermissionsUtil.TipInfo tip = new PermissionsUtil.TipInfo("提示", "当前应用缺少录音权限。\n \n请点击 \"设置\"-\"权限\"-打开所需权限。\n", "取消", "打开权限");
+
+        PermissionsUtil.requestPermission(getContext(), new PermissionListener() {
+            @Override
+            public void permissionGranted(@NonNull String[] permissions) {
+                onRecognise();
+            }
+
+            @Override
+            public void permissionDenied(@NonNull String[] permissions) {
+                ToastUtils.showShort("用户拒绝权限,无法使用语音");
+            }
+        }, new String[]{Manifest.permission.RECORD_AUDIO}, true, tip);
+
+
+    }
+
 
     public void onRecognise() {
         //1.创建RecognizerDialog对象
@@ -285,7 +313,7 @@ public class NewsFragment extends BaseFragment<NewsPresenter> implements NewsCon
 
     public void onSynthesize(String newsText) {
         //1.创建 SpeechSynthesizer 对象, 第二个参数： 本地合成时传 InitListener
-        SpeechSynthesizer mTts= SpeechSynthesizer.createSynthesizer(getContext(), null);
+        SpeechSynthesizer mTts = SpeechSynthesizer.createSynthesizer(getContext(), null);
         //2.合成参数设置，详见《 MSC Reference Manual》 SpeechSynthesizer 类
         //设置发音人（更多在线发音人，用户可参见 附录13.2
         mTts.setParameter(SpeechConstant.VOICE_NAME, "xiaoyan"); //设置发音人
@@ -300,7 +328,6 @@ public class NewsFragment extends BaseFragment<NewsPresenter> implements NewsCon
         //3.开始合成
         mTts.startSpeaking(newsText, null);
     }
-
 
 
     /**
