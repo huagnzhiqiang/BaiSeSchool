@@ -16,7 +16,7 @@
         android:layout_alignParentRight="true"
         android:layout_below="@id/time"
         android:padding="10dp"
-        android:src="@drawable/robot" />
+        android:src="@drawable/hzq" />
 
     <TextView
         android:id="@+id/tv"

@@ -20,20 +20,20 @@
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:layout_gravity="bottom"
-        android:background="#F5F6F7">
+        android:background="#f2f1f1">
 
 
         <EditText
             android:id="@+id/sendText"
             android:layout_width="match_parent"
-            android:layout_height="33dp"
+            android:layout_height="40dp"
             android:layout_centerVertical="true"
             android:layout_marginLeft="5dp"
-            android:layout_marginRight="5dip"
-            android:background="@null"
+            android:layout_marginRight="45dp"
+            android:background="@drawable/shape_chat"
             android:hint="请输入内容"
             android:maxLength="240"
-            android:padding="2dip"
+            android:padding="4dp"
             android:singleLine="true"
             android:textColor="#333333"
             android:textSize="14sp"/>
@@ -58,7 +58,7 @@
             android:layout_height="30dip"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
-            android:layout_marginRight="5dp"
+            android:layout_marginRight="10dp"
             android:src="@drawable/btn_chat_voice_selector"/>
 
     </RelativeLayout>

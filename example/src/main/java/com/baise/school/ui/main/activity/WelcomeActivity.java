@@ -34,7 +34,7 @@ public class WelcomeActivity extends BaseActivity {
                 Intent intent = new Intent();
                 intent.setClass(WelcomeActivity.this, MainActivity.class);
                 WelcomeActivity.this.startActivity(intent);
-                overridePendingTransition(R.anim.zoom_in,R.anim.zoom_out);
+//                overridePendingTransition(R.anim.zoom_in,R.anim.zoom_out);
                 WelcomeActivity.this.finish();
 
             }

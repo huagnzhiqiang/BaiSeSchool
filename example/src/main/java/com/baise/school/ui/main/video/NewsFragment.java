@@ -12,16 +12,19 @@ import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.baise.baselibs.Bean.MessageEvent;
 import com.baise.baselibs.app.AppConstants;
 import com.baise.baselibs.base.BaseFragment;
 import com.baise.baselibs.rx.RxBus;
+import com.baise.baselibs.utils.CommonUtils;
 import com.baise.baselibs.utils.GsonUtil;
 import com.baise.baselibs.utils.SpUtil;
 import com.baise.baselibs.utils.ToastUtils;
@@ -111,9 +114,23 @@ public class NewsFragment extends BaseFragment<NewsPresenter> implements NewsCon
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if (s.length() > 0) {
+
+                    ViewGroup.LayoutParams params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT,CommonUtils.dp2px(40));
+                    ((RelativeLayout.LayoutParams) params).rightMargin =CommonUtils.dp2px(65);
+                    ((RelativeLayout.LayoutParams) params).leftMargin =CommonUtils.dp2px(5);
+                    ((RelativeLayout.LayoutParams) params).addRule(RelativeLayout.CENTER_VERTICAL);
+                    mSendText.setLayoutParams(params);
+
                     mTvSendSms.setVisibility(View.VISIBLE);
                     mIvSend.setVisibility(View.GONE);
                 } else {
+
+                    ViewGroup.LayoutParams params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT,CommonUtils.dp2px(40));
+                    ((RelativeLayout.LayoutParams) params).rightMargin = CommonUtils.dp2px(45);
+                    ((RelativeLayout.LayoutParams) params).leftMargin =CommonUtils.dp2px(5);
+                    ((RelativeLayout.LayoutParams) params).addRule(RelativeLayout.CENTER_VERTICAL);
+                    mSendText.setLayoutParams(params);
+
                     mTvSendSms.setVisibility(View.GONE);
                     mIvSend.setVisibility(View.VISIBLE);
                 }
@@ -502,7 +519,6 @@ public class NewsFragment extends BaseFragment<NewsPresenter> implements NewsCon
             switch (e.getAction()) {
 
                 case MotionEvent.ACTION_DOWN :
-                    Logger.d("ACTION_DOWN--->:");
                     hintKeyBoard();
                     break;
             }
