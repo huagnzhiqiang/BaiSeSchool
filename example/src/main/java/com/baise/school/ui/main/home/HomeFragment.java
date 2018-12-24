@@ -7,13 +7,10 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
 import com.baise.baselibs.base.BaseFragment;
-import com.baise.baselibs.utils.ToastUtils;
+import com.baise.baselibs.mvp.BasePresenter;
 import com.baise.school.R;
-import com.baise.school.data.entity.TestNews;
 import com.baise.school.ui.main.activity.WebViewActivity;
 import com.orhanobut.logger.Logger;
-
-import java.util.List;
 
 import butterknife.BindView;
 
@@ -23,19 +20,16 @@ import butterknife.BindView;
  * @time 2018/6/12 22:57
  * @desc 首页
  */
-public class HomeFragment extends BaseFragment<HomePresenter> implements HomeContract.View {
+public class HomeFragment extends BaseFragment{
 
 
     @BindView(R.id.webView) WebView mWebView;
 
 
-    private String mTitle;
-
     public static HomeFragment getInstance(String title) {
         HomeFragment fragment = new HomeFragment();
         Bundle bundle = new Bundle();
         fragment.setArguments(bundle);
-        fragment.mTitle = title;
         return fragment;
     }
 
@@ -44,9 +38,14 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements HomeCon
         return R.layout.fragment_home;
     }
 
+    /**
+     * 创建Presenter
+     *
+     * @return 返回当前的Presenter
+     */
     @Override
-    protected HomePresenter createPresenter() {
-        return new HomePresenter();
+    protected BasePresenter createPresenter() {
+        return null;
     }
 
 
@@ -114,11 +113,6 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements HomeCon
     }
 
 
-    @Override
-    public void showData(List<TestNews> testNews) {
-        ToastUtils.showShort(testNews.get(0).toString());
-    }
-
 
     /**
      * 请求网络
@@ -136,7 +130,6 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements HomeCon
      */
     @Override
     public void showError(String msg, int code) {
-        ToastUtils.showShort(msg);
 
     }
 

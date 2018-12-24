@@ -1,6 +1,7 @@
 package com.baise.school.ui.main.video;
 
 import android.Manifest;
+import android.content.Context;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -9,9 +10,9 @@ import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
-import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -55,7 +56,6 @@ import java.util.List;
 import java.util.Map;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
 import butterknife.OnClick;
 import io.reactivex.functions.Consumer;
 
@@ -144,7 +144,11 @@ public class NewsFragment extends BaseFragment<NewsPresenter> implements NewsCon
         });
 
 
+        mRecyclerView.addOnItemTouchListener(touchListener);
+
     }
+
+
 
 
     @Override
@@ -488,6 +492,49 @@ public class NewsFragment extends BaseFragment<NewsPresenter> implements NewsCon
     }
 
 
+
+    //====================================================== recyclerView 软键盘监听 =========================================================
+
+    RecyclerView.OnItemTouchListener touchListener = new RecyclerView.OnItemTouchListener() {
+        @Override
+        public boolean onInterceptTouchEvent(RecyclerView rv, MotionEvent e) {
+
+            switch (e.getAction()) {
+
+                case MotionEvent.ACTION_DOWN :
+                    Logger.d("ACTION_DOWN--->:");
+                    hintKeyBoard();
+                    break;
+            }
+            return false;
+        }
+
+        @Override
+        public void onTouchEvent(RecyclerView rv, MotionEvent e) {
+
+        }
+
+        @Override
+        public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept) {
+
+        }
+    };
+
+
+    public void hintKeyBoard() {
+        //拿到InputMethodManager
+        InputMethodManager imm = (InputMethodManager)getActivity(). getSystemService(Context.INPUT_METHOD_SERVICE);
+        //如果window上view获取焦点 && view不为空
+        if (imm.isActive() && getActivity().getCurrentFocus() != null) {
+            //拿到view的token 不为空
+            if (getActivity().getCurrentFocus().getWindowToken() != null) {
+                //表示软键盘窗口总是隐藏，除非开始时以SHOW_FORCED显示。
+                imm.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+            }
+        }
+    }
+    //====================================================== recyclerView 软键盘监听 =========================================================
+
     @Override
     public void onDestroy() {
         super.onDestroy();
@@ -506,11 +553,4 @@ public class NewsFragment extends BaseFragment<NewsPresenter> implements NewsCon
         mTts.destroy();
     }
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        // TODO: inflate a fragment view
-        View rootView = super.onCreateView(inflater, container, savedInstanceState);
-        ButterKnife.bind(this, rootView);
-        return rootView;
-    }
 }
