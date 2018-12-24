@@ -1,4 +1,4 @@
-package com.baise.school.width;
+package com.baise.school.widget;
 
 import android.content.Context;
 import android.util.AttributeSet;

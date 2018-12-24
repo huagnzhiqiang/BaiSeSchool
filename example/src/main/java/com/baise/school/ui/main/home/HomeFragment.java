@@ -5,12 +5,8 @@ import android.text.TextUtils;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import android.widget.Button;
-import android.widget.TextView;
 
-import com.baise.baselibs.Bean.MessageEvent;
 import com.baise.baselibs.base.BaseFragment;
-import com.baise.baselibs.rx.RxBus;
 import com.baise.baselibs.utils.ToastUtils;
 import com.baise.school.R;
 import com.baise.school.data.entity.TestNews;
@@ -29,9 +25,7 @@ import butterknife.BindView;
  */
 public class HomeFragment extends BaseFragment<HomePresenter> implements HomeContract.View {
 
-    @BindView(R.id.textView) TextView textView;
-    @BindView(R.id.button) Button button;
-    @BindView(R.id.button2) Button button2;
+
     @BindView(R.id.webView) WebView mWebView;
 
 
@@ -55,14 +49,6 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements HomeCon
         return new HomePresenter();
     }
 
-
-    @Override
-    protected void initListener() {
-        button.setOnClickListener(v -> mPresenter.requestData());
-        button2.setOnClickListener(v -> {
-            RxBus.getDefault().postSticky(new MessageEvent("1", "我爱你"));
-        });
-    }
 
     @Override
     protected void initData() {
@@ -131,7 +117,6 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements HomeCon
     @Override
     public void showData(List<TestNews> testNews) {
         ToastUtils.showShort(testNews.get(0).toString());
-        textView.setText(testNews.get(0).toString());
     }
 
 

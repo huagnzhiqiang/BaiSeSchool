@@ -135,11 +135,10 @@ public class NewsFragment extends BaseFragment<NewsPresenter> implements NewsCon
             if (heightDifference > 200) {
                 //软键盘显示
                 RxBus.getDefault().post(new MessageEvent(EventBusTag.KEYBOARD_STATE_SHOW));
-
+                mRecyclerView.scrollToPosition(mAdapter.getItemCount() - 1);
             } else {
                 //软键盘隐藏
                 RxBus.getDefault().post(new MessageEvent(EventBusTag.KEYBOARD_STATE_HIDE));
-
             }
 
         });

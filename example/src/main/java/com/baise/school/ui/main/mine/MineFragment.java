@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.CheckBox;
-import android.widget.RadioButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -39,8 +38,7 @@ public class MineFragment extends BaseFragment<MinePresenter> implements MineCon
 
     @BindView(R.id.tv_clean_news) TextView mTvCleanNews;
     @BindView(R.id.rl_select_reading) RelativeLayout mRlSelectReading;
-    @BindView(R.id.rb_voice) RadioButton mRbVoice;
-    @BindView(R.id.rb_text) RadioButton mRbText;
+
     @BindView(R.id.cb_speech) CheckBox mCbSpeech;
     private String mTitle;
 
@@ -131,7 +129,7 @@ public class MineFragment extends BaseFragment<MinePresenter> implements MineCon
     }
 
 
-    @OnClick({R.id.tv_clean_news, R.id.tv_select_audio, R.id.rl_select_audio, R.id.tv_select_reading, R.id.rl_select_reading, R.id.rb_voice, R.id.rb_text, R.id.cb_speech})
+    @OnClick({R.id.tv_clean_news, R.id.tv_select_audio, R.id.rl_select_audio, R.id.tv_select_reading, R.id.rl_select_reading, R.id.cb_speech})
     public void onClick(View view) {
         switch (view.getId()) {
 
@@ -153,10 +151,6 @@ public class MineFragment extends BaseFragment<MinePresenter> implements MineCon
                 selectReading();
                 break;
 
-            case R.id.rb_voice:
-                break;
-            case R.id.rb_text:
-                break;
             case R.id.cb_speech:
 
                 //获取朗读设置

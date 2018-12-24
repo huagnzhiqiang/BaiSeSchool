@@ -162,7 +162,7 @@ public abstract class BaseFragment<T extends BasePresenter> extends BaseLazyFrag
     protected void initImmersionBar() {
         mImmersionBar = ImmersionBar.with(this);
         mImmersionBar.fitsSystemWindows(true);
-        mImmersionBar.keyboardEnable(true);  //解决软键盘与底部输入框冲突问题
+//        mImmersionBar.keyboardEnable(true);  //解决软键盘与底部输入框冲突问题
         mImmersionBar.statusBarColor(R.color.item_text_color);
         mImmersionBar.init();
     }

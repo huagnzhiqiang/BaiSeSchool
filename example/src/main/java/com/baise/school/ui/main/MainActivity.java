@@ -23,6 +23,7 @@ import com.baise.school.ui.main.video.NewsFragment;
 import com.flyco.tablayout.CommonTabLayout;
 import com.flyco.tablayout.listener.CustomTabEntity;
 import com.flyco.tablayout.listener.OnTabSelectListener;
+import com.gyf.barlibrary.ImmersionBar;
 import com.orhanobut.logger.Logger;
 
 import java.util.ArrayList;
@@ -95,8 +96,11 @@ public class MainActivity extends BaseMvpActivity<MainPresenter> implements Main
      */
     @Override
     protected void initImmersionBar() {
-        super.initImmersionBar();
+        mImmersionBar = ImmersionBar.with(this);
         mImmersionBar.fitsSystemWindows(false);
+        mImmersionBar.keyboardEnable(true);  //解决软键盘与底部输入框冲突问题
+        mImmersionBar.statusBarColor(com.baise.baselibs.R.color.item_text_color);
+        mImmersionBar.init();
     }
 
 
@@ -111,15 +115,11 @@ public class MainActivity extends BaseMvpActivity<MainPresenter> implements Main
         mPresenter.addDispose(RxBus.getDefault().toObservable(MessageEvent.class).subscribe(messageEvent -> {
             //软键盘隐藏状态
             if (messageEvent.getTag().equals(EventBusTag.KEYBOARD_STATE_HIDE)) {
-
                 tabLayout.setVisibility(View.VISIBLE);
-
-                Logger.d("accept--->:" + "软键盘隐藏状态");
             }
 
             //软键盘显示状态
             if (messageEvent.getTag().equals(EventBusTag.KEYBOARD_STATE_SHOW)) {
-                Logger.d("accept--->:" + "软键盘显示状态");
                 tabLayout.setVisibility(View.GONE);
 
             }
