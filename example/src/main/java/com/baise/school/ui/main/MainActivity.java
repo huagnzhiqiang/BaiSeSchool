@@ -5,13 +5,16 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.view.KeyEvent;
-import android.view.WindowManager;
+import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.Toast;
 
+import com.baise.baselibs.Bean.MessageEvent;
 import com.baise.baselibs.app.AppManager;
 import com.baise.baselibs.base.BaseMvpActivity;
+import com.baise.baselibs.rx.RxBus;
 import com.baise.school.R;
+import com.baise.school.constants.EventBusTag;
 import com.baise.school.data.entity.TabEntity;
 import com.baise.school.data.entity.TestNews;
 import com.baise.school.ui.main.home.HomeFragment;
@@ -94,12 +97,34 @@ public class MainActivity extends BaseMvpActivity<MainPresenter> implements Main
     protected void initImmersionBar() {
         super.initImmersionBar();
         mImmersionBar.fitsSystemWindows(false);
-        mImmersionBar.keyboardEnable(true);  //解决软键盘与底部输入框冲突问题
-        mImmersionBar.fullScreen(true);
-        mImmersionBar.keyboardMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);  //单独指定软键盘模式
-        mImmersionBar.init();
     }
 
+
+    /**
+     * 初始化监听器的代码写在这个方法中
+     */
+    @Override
+    protected void initListener() {
+
+
+        Logger.d("initListener--->:" + mPresenter);
+        mPresenter.addDispose(RxBus.getDefault().toObservable(MessageEvent.class).subscribe(messageEvent -> {
+            //软键盘隐藏状态
+            if (messageEvent.getTag().equals(EventBusTag.KEYBOARD_STATE_HIDE)) {
+
+                tabLayout.setVisibility(View.VISIBLE);
+
+                Logger.d("accept--->:" + "软键盘隐藏状态");
+            }
+
+            //软键盘显示状态
+            if (messageEvent.getTag().equals(EventBusTag.KEYBOARD_STATE_SHOW)) {
+                Logger.d("accept--->:" + "软键盘显示状态");
+                tabLayout.setVisibility(View.GONE);
+
+            }
+        }));
+    }
 
     /**
      * 请求网络

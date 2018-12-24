@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/ll_chat"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
-
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recycler_view"
@@ -15,12 +16,11 @@
         android:scrollbars="none"/>
 
 
-
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="50dp"
+        android:layout_gravity="bottom"
         android:background="#F5F6F7">
-
 
 
         <EditText
@@ -36,7 +36,7 @@
             android:padding="2dip"
             android:singleLine="true"
             android:textColor="#333333"
-            android:textSize="14sp" />
+            android:textSize="14sp"/>
 
         <TextView
             android:id="@+id/tv_send_sms"
@@ -50,7 +50,7 @@
             android:text="发 送"
             android:textColor="#ffffff"
             android:textSize="14sp"
-            android:visibility="gone" />
+            android:visibility="gone"/>
 
         <ImageView
             android:id="@+id/iv_send"
@@ -59,8 +59,10 @@
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:layout_marginRight="5dp"
-            android:src="@drawable/btn_chat_voice_selector" />
+            android:src="@drawable/btn_chat_voice_selector"/>
 
     </RelativeLayout>
 
 </LinearLayout>
+
+

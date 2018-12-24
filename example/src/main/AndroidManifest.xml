@@ -36,7 +36,7 @@
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
         <activity
-            android:name="com.baise.school.ui.main.WelcomeActivity"
+            android:name="com.baise.school.ui.main.activity.WelcomeActivity"
             android:theme="@style/ThemeSplash">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
@@ -46,11 +46,11 @@
         </activity>
 
         <!--主页-->
-        <activity android:name="com.baise.school.ui.main.MainActivity"   android:windowSoftInputMode="adjustResize"/>
+        <activity android:name="com.baise.school.ui.main.MainActivity" />
 
 
         <!--webView页面-->
-        <activity android:name="com.baise.school.ui.main.WebViewActivity"/>
+        <activity android:name="com.baise.school.ui.main.activity.WebViewActivity"/>
 
         <!--权限页面-->
         <activity android:name="com.baise.baselibs.utils.permission.PermissionActivity"/>

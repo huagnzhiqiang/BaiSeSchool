@@ -54,6 +54,7 @@ public abstract class BaseActivity extends RxAppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Logger.d("onCreate--->:" + "基类 savedInstanceState");
 
         //管理Activity
         AppManager.getInstance().addActivity(this);
@@ -85,6 +86,8 @@ public abstract class BaseActivity extends RxAppCompatActivity {
         initListener();
         networkRequest();
         //        registerNetChangeReceiver();
+        Logger.d("onCreate--->:" + "基类 networkRequest");
+
     }
 
 
@@ -96,7 +99,8 @@ public abstract class BaseActivity extends RxAppCompatActivity {
     protected void initImmersionBar() {
         mImmersionBar = ImmersionBar.with(this);
         mImmersionBar.fitsSystemWindows(true);
-        mImmersionBar.statusBarColor(R.color.colorPrimary);
+        mImmersionBar.keyboardEnable(true);  //解决软键盘与底部输入框冲突问题
+        mImmersionBar.statusBarColor(R.color.item_text_color);
         mImmersionBar.init();
     }
 

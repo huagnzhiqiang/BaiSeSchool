@@ -85,9 +85,9 @@ public class BaseRetrofit {
                             .hostnameVerifier(new TrustAllHostnameVerifier())//校验名称,这个对象就是信任所有的主机,也就是信任所有https的请求
                             .cache(cache)  //添加缓存
 
-                            .connectTimeout(15, TimeUnit.SECONDS)//连接超时时间
-                            .readTimeout(15, TimeUnit.SECONDS)//读取超时时间
-                            .writeTimeout(15, TimeUnit.SECONDS)//写入超时时间
+                            .connectTimeout(60, TimeUnit.SECONDS)//连接超时时间
+                            .readTimeout(60, TimeUnit.SECONDS)//读取超时时间
+                            .writeTimeout(60, TimeUnit.SECONDS)//写入超时时间
                             .retryOnConnectionFailure(true)//连接不上是否重连,false不重连
 
                             .build();

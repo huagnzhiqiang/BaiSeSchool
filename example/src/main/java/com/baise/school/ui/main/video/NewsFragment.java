@@ -1,6 +1,7 @@
 package com.baise.school.ui.main.video;
 
 import android.Manifest;
+import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
@@ -8,10 +9,12 @@ import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.view.LayoutInflater;
 import android.view.View;
-import android.view.WindowManager;
+import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.baise.baselibs.Bean.MessageEvent;
@@ -52,6 +55,7 @@ import java.util.List;
 import java.util.Map;
 
 import butterknife.BindView;
+import butterknife.ButterKnife;
 import butterknife.OnClick;
 import io.reactivex.functions.Consumer;
 
@@ -67,7 +71,7 @@ public class NewsFragment extends BaseFragment<NewsPresenter> implements NewsCon
     @BindView(R.id.sendText) EditText mSendText;
     @BindView(R.id.tv_send_sms) TextView mTvSendSms;
     @BindView(R.id.iv_send) ImageView mIvSend;
-    private String mTitle;
+    @BindView(R.id.ll_chat) LinearLayout mLlChat;
     private MsmAdapter mAdapter;
 
     private double currentTime = 0, oldTime = 0;
@@ -83,7 +87,6 @@ public class NewsFragment extends BaseFragment<NewsPresenter> implements NewsCon
         NewsFragment fragment = new NewsFragment();
         Bundle bundle = new Bundle();
         fragment.setArguments(bundle);
-        fragment.mTitle = title;
         return fragment;
     }
 
@@ -120,6 +123,28 @@ public class NewsFragment extends BaseFragment<NewsPresenter> implements NewsCon
             public void afterTextChanged(Editable s) {
             }
         });
+
+        mLlChat.getViewTreeObserver().addOnGlobalLayoutListener(() -> {
+            Rect r = new Rect();
+            //获取当前界面可视部分
+            getActivity().getWindow().getDecorView().getWindowVisibleDisplayFrame(r);
+            //获取屏幕的高度
+            int screenHeight = getActivity().getWindow().getDecorView().getRootView().getHeight();
+            //此处就是用来获取键盘的高度的， 在键盘没有弹出的时候 此高度为0 键盘弹出的时候为一个正数
+            int heightDifference = screenHeight - r.bottom;
+            if (heightDifference > 200) {
+                //软键盘显示
+                RxBus.getDefault().post(new MessageEvent(EventBusTag.KEYBOARD_STATE_SHOW));
+
+            } else {
+                //软键盘隐藏
+                RxBus.getDefault().post(new MessageEvent(EventBusTag.KEYBOARD_STATE_HIDE));
+
+            }
+
+        });
+
+
     }
 
 
@@ -144,6 +169,8 @@ public class NewsFragment extends BaseFragment<NewsPresenter> implements NewsCon
                 }
             }
         }));
+
+
     }
 
 
@@ -171,8 +198,7 @@ public class NewsFragment extends BaseFragment<NewsPresenter> implements NewsCon
         mImmersionBar = ImmersionBar.with(this);
         mImmersionBar.fitsSystemWindows(false);
         mImmersionBar.keyboardEnable(true);  //解决软键盘与底部输入框冲突问题
-        mImmersionBar.statusBarColor(R.color.colorAccent);
-        mImmersionBar.keyboardMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);  //单独指定软键盘模式
+        mImmersionBar.statusBarColor(R.color.item_text_color);
         mImmersionBar.navigationBarWithKitkatEnable(false);
         mImmersionBar.init();
     }
@@ -287,8 +313,8 @@ public class NewsFragment extends BaseFragment<NewsPresenter> implements NewsCon
         }
         //若要将UI控件用于语义理解，必须添加以下参数设置，设置之后onResult回调返回将是语义理解
         //结果
-        // mDialog.setParameter("asr_sch", "1");
-        // mDialog.setParameter("nlp_version", "2.0");
+        //         mDialog.setParameter("asr_sch", "1");
+        //         mDialog.setParameter("nlp_version", "2.0");
         //3.设置回调接口
         mDialog.setListener(mRecognizerDialogListener);
         //4.显示dialog，接收语音输入
@@ -463,36 +489,6 @@ public class NewsFragment extends BaseFragment<NewsPresenter> implements NewsCon
     }
 
 
-    //        /**
-    //         * 隐藏软键盘
-    //         * hideSoftInputView
-    //         *
-    //         * @param
-    //         * @return void
-    //         * @throws
-    //         * @Title: hideSoftInputView
-    //         */
-    //        public void hideSoftInputView() {
-    //            InputMethodManager manager = ((InputMethodManager) getActivity().getSystemService(Activity.INPUT_METHOD_SERVICE));
-    //            if (getActivity().getWindow().getAttributes().softInputMode != WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN) {
-    //                if (getCurrentFocus() != null)
-    //                    manager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
-    //            }
-    //        }
-    //
-    //        /**
-    //         * 弹出输入法窗口
-    //         */
-    //        public void showSoftInputView(final EditText et) {
-    //            new Handler().postDelayed(new Runnable() {
-    //                @Override
-    //                public void run() {
-    //                    ((InputMethodManager) et.getContext().getSystemService(Service.INPUT_METHOD_SERVICE)).toggleSoftInput(0, InputMethodManager.HIDE_NOT_ALWAYS);
-    //                }
-    //            }, 0);
-    //        }
-
-
     @Override
     public void onDestroy() {
         super.onDestroy();
@@ -509,5 +505,13 @@ public class NewsFragment extends BaseFragment<NewsPresenter> implements NewsCon
         super.InVisibleEvent();
         //停止朗读
         mTts.destroy();
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        // TODO: inflate a fragment view
+        View rootView = super.onCreateView(inflater, container, savedInstanceState);
+        ButterKnife.bind(this, rootView);
+        return rootView;
     }
 }

@@ -1,4 +1,4 @@
-package com.baise.school.ui.main;
+package com.baise.school.ui.main.activity;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;

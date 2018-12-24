@@ -1,10 +1,11 @@
-package com.baise.school.ui.main;
+package com.baise.school.ui.main.activity;
 
 import android.content.Intent;
 import android.os.Handler;
 
 import com.baise.baselibs.base.BaseActivity;
 import com.baise.school.R;
+import com.baise.school.ui.main.MainActivity;
 
 
 /**

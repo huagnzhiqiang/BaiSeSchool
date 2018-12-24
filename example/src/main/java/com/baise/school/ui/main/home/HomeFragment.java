@@ -14,7 +14,7 @@ import com.baise.baselibs.rx.RxBus;
 import com.baise.baselibs.utils.ToastUtils;
 import com.baise.school.R;
 import com.baise.school.data.entity.TestNews;
-import com.baise.school.ui.main.WebViewActivity;
+import com.baise.school.ui.main.activity.WebViewActivity;
 import com.orhanobut.logger.Logger;
 
 import java.util.List;
