@@ -25,7 +25,7 @@ public class BaseApplication extends Application {
         mContext = this;
         CacheManager.init(this);
         //检测内存泄漏
-        initLeakCanary();
+        //initLeakCanary();
 
         //注册监听每个activity的生命周期,便于堆栈式管理
         registerActivityLifecycleCallbacks(mCallbacks);
@@ -105,7 +105,7 @@ public class BaseApplication extends Application {
         Logger.addLogAdapter(new AndroidLogAdapter(formatStrategy) {
             @Override
             public boolean isLoggable(int priority, String tag) {
-                return true; //关闭打印日志设置为false
+                return false; //关闭打印日志设置为false
             }
         });
     }

@@ -284,7 +284,7 @@ public abstract class BaseFragment<T extends BasePresenter> extends BaseLazyFrag
         }
 
         //销毁检查内存泄露问题插件
-        initLeakCanary();
+       // initLeakCanary();
     }
 
     /** ==================Fragment中使用沉浸式设置属性===================== */

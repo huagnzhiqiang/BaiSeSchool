@@ -1,6 +1,5 @@
 package com.baise.school.ui.main.activity;
 
-import android.content.Intent;
 import android.os.Handler;
 
 import com.baise.baselibs.base.BaseActivity;
@@ -31,11 +30,8 @@ public class WelcomeActivity extends BaseActivity {
         new Handler().postDelayed(new Runnable(){
 
             public void run() {
-                Intent intent = new Intent();
-                intent.setClass(WelcomeActivity.this, MainActivity.class);
-                WelcomeActivity.this.startActivity(intent);
-//                overridePendingTransition(R.anim.zoom_in,R.anim.zoom_out);
-                WelcomeActivity.this.finish();
+                startActivity(MainActivity.class);
+                finishActivity();
 
             }
 

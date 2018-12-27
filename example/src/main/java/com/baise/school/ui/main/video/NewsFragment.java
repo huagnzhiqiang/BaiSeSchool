@@ -39,14 +39,16 @@ import com.baise.school.data.entity.NewsEntity;
 import com.baise.school.data.entity.RecognizerResultEntity;
 import com.baise.school.db.DaoSession;
 import com.baise.school.db.NewsEntityDao;
+import com.baise.school.widget.ChatDialog;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.loadmore.SimpleLoadMoreView;
 import com.gyf.barlibrary.ImmersionBar;
+import com.iflytek.cloud.RecognizerListener;
 import com.iflytek.cloud.RecognizerResult;
 import com.iflytek.cloud.SpeechConstant;
 import com.iflytek.cloud.SpeechError;
+import com.iflytek.cloud.SpeechRecognizer;
 import com.iflytek.cloud.SpeechSynthesizer;
-import com.iflytek.cloud.ui.RecognizerDialog;
 import com.iflytek.cloud.ui.RecognizerDialogListener;
 import com.orhanobut.logger.Logger;
 
@@ -57,6 +59,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -83,7 +86,12 @@ public class NewsFragment extends BaseFragment<NewsPresenter> implements NewsCon
     private Query<NewsEntity> mMsmEntityQuery;
 
     private String[] defaultNest = {"百色学院地址", "地址", "百色学院", "百色", "学院"};
+
+    //声音
+    private String[] defaulAudio = {"亲,您的声音也太小了。", "亲,您的声音可以大点吗?", "亲,你没力气说了,该吃饭了。"};
+
     private SpeechSynthesizer mTts;
+    private ChatDialog mDialog;
 
 
     public static NewsFragment getInstance(String title) {
@@ -115,9 +123,9 @@ public class NewsFragment extends BaseFragment<NewsPresenter> implements NewsCon
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if (s.length() > 0) {
 
-                    ViewGroup.LayoutParams params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT,CommonUtils.dp2px(40));
-                    ((RelativeLayout.LayoutParams) params).rightMargin =CommonUtils.dp2px(65);
-                    ((RelativeLayout.LayoutParams) params).leftMargin =CommonUtils.dp2px(5);
+                    ViewGroup.LayoutParams params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, CommonUtils.dp2px(40));
+                    ((RelativeLayout.LayoutParams) params).rightMargin = CommonUtils.dp2px(65);
+                    ((RelativeLayout.LayoutParams) params).leftMargin = CommonUtils.dp2px(5);
                     ((RelativeLayout.LayoutParams) params).addRule(RelativeLayout.CENTER_VERTICAL);
                     mSendText.setLayoutParams(params);
 
@@ -125,9 +133,9 @@ public class NewsFragment extends BaseFragment<NewsPresenter> implements NewsCon
                     mIvSend.setVisibility(View.GONE);
                 } else {
 
-                    ViewGroup.LayoutParams params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT,CommonUtils.dp2px(40));
+                    ViewGroup.LayoutParams params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, CommonUtils.dp2px(40));
                     ((RelativeLayout.LayoutParams) params).rightMargin = CommonUtils.dp2px(45);
-                    ((RelativeLayout.LayoutParams) params).leftMargin =CommonUtils.dp2px(5);
+                    ((RelativeLayout.LayoutParams) params).leftMargin = CommonUtils.dp2px(5);
                     ((RelativeLayout.LayoutParams) params).addRule(RelativeLayout.CENTER_VERTICAL);
                     mSendText.setLayoutParams(params);
 
@@ -164,8 +172,6 @@ public class NewsFragment extends BaseFragment<NewsPresenter> implements NewsCon
         mRecyclerView.addOnItemTouchListener(touchListener);
 
     }
-
-
 
 
     @Override
@@ -281,7 +287,6 @@ public class NewsFragment extends BaseFragment<NewsPresenter> implements NewsCon
 
             case R.id.iv_send:
 
-
                 requestWriteExternaLStorage();
 
                 break;
@@ -320,26 +325,162 @@ public class NewsFragment extends BaseFragment<NewsPresenter> implements NewsCon
      */
     public void onRecognise() {
 
+
         //获取录音语言
         String record = SpUtil.getInstance().getString(AppConstants.XF_SET_VOICE_RECORD);
-        //1.创建RecognizerDialog对象
-        RecognizerDialog mDialog = new RecognizerDialog(getContext(), null);
+        //        //1.创建RecognizerDialog对象
+        //        RecognizerDialog mDialog = new RecognizerDialog(getContext(), null);
+        //
+        //        //2.设置accent、 language等参数
+        //        mDialog.setParameter(SpeechConstant.LANGUAGE, "zh_cn");
+        //
+        //        if (TextUtils.isEmpty(record)) {
+        //            mDialog.setParameter(SpeechConstant.ACCENT, "mandarin");//默认录音语言
+        //        } else {
+        //            mDialog.setParameter(SpeechConstant.ACCENT, record);
+        //        }
+        //        //若要将UI控件用于语义理解，必须添加以下参数设置，设置之后onResult回调返回将是语义理解
+        //        //结果
+        //        //         mDialog.setParameter("asr_sch", "1");
+        //        //         mDialog.setParameter("nlp_version", "2.0");
+        //        //3.设置回调接口
+        //        mDialog.setListener(mRecognizerDialogListener);
+        //        //4.显示dialog，接收语音输入
+        //        mDialog.show();
+
+        mDialog = new ChatDialog(getContext());
+
+        //可以自定义
+        SpeechRecognizer recognizer = SpeechRecognizer.createRecognizer(getContext(), null);
+
         //2.设置accent、 language等参数
-        mDialog.setParameter(SpeechConstant.LANGUAGE, "zh_cn");
+        recognizer.setParameter(SpeechConstant.LANGUAGE, "zh_cn");
+
         if (TextUtils.isEmpty(record)) {
-            mDialog.setParameter(SpeechConstant.ACCENT, "mandarin");//默认录音语言
+            recognizer.setParameter(SpeechConstant.ACCENT, "mandarin");//默认录音语言
         } else {
-            mDialog.setParameter(SpeechConstant.ACCENT, record);
+            recognizer.setParameter(SpeechConstant.ACCENT, record);
         }
+
         //若要将UI控件用于语义理解，必须添加以下参数设置，设置之后onResult回调返回将是语义理解
-        //结果
-        //         mDialog.setParameter("asr_sch", "1");
-        //         mDialog.setParameter("nlp_version", "2.0");
+
         //3.设置回调接口
-        mDialog.setListener(mRecognizerDialogListener);
+        recognizer.startListening(recognizerListener);
         //4.显示dialog，接收语音输入
-        mDialog.show();
+
     }
+
+    /**
+     * 听写监听器。
+     */
+    private RecognizerListener recognizerListener = new RecognizerListener() {
+
+        /**
+         * 声音
+         * @param volume 声音
+         * @param bytes
+         */
+        @Override
+        public void onVolumeChanged(int volume, byte[] bytes) {
+
+        }
+
+        @Override
+        public void onBeginOfSpeech() {
+
+            if (mDialog != null) {
+                mDialog.show();
+            }
+        }
+
+
+        /**
+         * 错误
+         * @param error
+         */
+        @Override
+        public void onError(SpeechError error) {
+            // Tips：
+            // 错误码：10118(您没有说话)，可能是录音机权限被禁，需要提示用户打开应用的录音权限。
+            // 如果使用本地功能（语音+）需要提示用户开启语音+的录音权限。
+
+
+            if (error.getErrorCode() == 10118) {
+
+                if (mDialog != null) {
+                    String synte = defaulAudio[new Random().nextInt(defaulAudio.length)];
+                    mDialog.setContent(synte);
+                    ToastUtils.showShort(synte);
+                    //获取朗读设置
+                    boolean reading = SpUtil.getInstance().getBoolean(AppConstants.READING);
+                    if (!reading) {
+                        onSynthesize(synte);
+                    }
+                    Logger.d("onError--->:" + new Random().nextInt(defaulAudio.length));
+                }
+            }
+
+        }
+
+        /**
+         * 结束
+         */
+        @Override
+        public void onEndOfSpeech() {
+
+            if (mDialog.isShowing()) {
+                mDialog.dismiss();
+            }
+
+
+        }
+
+        /**
+         * 返回的值
+         * @param results 返回的值
+         * @param isLast
+         */
+        @Override
+        public void onResult(RecognizerResult results, boolean isLast) {
+
+            if (mDialog.isShowing()) {
+                mDialog.dismiss();
+            }
+
+            Logger.d("onResult--->:" + results.getResultString());
+
+            if (isLast) {
+                return;
+            }
+            RecognizerResultEntity resultEntity = GsonUtil.fromJson(results.getResultString(), RecognizerResultEntity.class);
+
+            List<RecognizerResultEntity.WsBean> ws = resultEntity.getWs();
+            int size = ws.size();
+            String msg = "";
+            for (int i = 0; i < size; i++) {
+                List<RecognizerResultEntity.WsBean.CwBean> cw = ws.get(i).getCw();
+                for (int j = 0; j < cw.size(); j++) {
+                    msg += cw.get(j).getW();
+                }
+            }
+            if (mAdapter != null && !TextUtils.isEmpty(msg)) {
+
+                //发送
+                mSendText.setText("");
+                NewsEntity entity = new NewsEntity().setContent(msg).setTime(getTime()).setType(MsmAdapter.SEND);
+                mAdapter.addData(entity);
+                insertMsm(MsmAdapter.SEND, msg, getTime());
+                mRecyclerView.scrollToPosition(mAdapter.getItemCount() - 1);
+                senNews(msg);
+
+            }
+
+        }
+
+        @Override
+        public void onEvent(int eventType, int arg1, int arg2, Bundle obj) {
+        }
+    };
 
 
     //讯飞语音
@@ -509,7 +650,6 @@ public class NewsFragment extends BaseFragment<NewsPresenter> implements NewsCon
     }
 
 
-
     //====================================================== recyclerView 软键盘监听 =========================================================
 
     RecyclerView.OnItemTouchListener touchListener = new RecyclerView.OnItemTouchListener() {
@@ -518,7 +658,7 @@ public class NewsFragment extends BaseFragment<NewsPresenter> implements NewsCon
 
             switch (e.getAction()) {
 
-                case MotionEvent.ACTION_DOWN :
+                case MotionEvent.ACTION_DOWN:
                     hintKeyBoard();
                     break;
             }
@@ -539,7 +679,7 @@ public class NewsFragment extends BaseFragment<NewsPresenter> implements NewsCon
 
     public void hintKeyBoard() {
         //拿到InputMethodManager
-        InputMethodManager imm = (InputMethodManager)getActivity(). getSystemService(Context.INPUT_METHOD_SERVICE);
+        InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
         //如果window上view获取焦点 && view不为空
         if (imm.isActive() && getActivity().getCurrentFocus() != null) {
             //拿到view的token 不为空
@@ -567,6 +707,9 @@ public class NewsFragment extends BaseFragment<NewsPresenter> implements NewsCon
         super.InVisibleEvent();
         //停止朗读
         mTts.destroy();
+
+        Logger.d("InVisibleEvent--->:" + "加载过数据后");
     }
+
 
 }

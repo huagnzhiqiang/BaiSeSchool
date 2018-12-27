@@ -40,7 +40,6 @@ public abstract class BaseLazyFragment extends RxFragment {
         isViewInitiated = true;
         //只有Fragment onCreateView好了，
 
-        Logger.d("lazyLoad--->:" + "onActivityCreated");
         lazyLoad();
     }
 
@@ -58,11 +57,9 @@ public abstract class BaseLazyFragment extends RxFragment {
             //可见
             this.isVisibleToUser = true;
             lazyLoad();
-            Logger.d("lazyLoad--->:" + "可见");
         } else {
             //不可见
             this.isVisibleToUser = false;
-            Logger.d("lazyLoad--->:" + "不可见");
             onInVisible();
 
         }
@@ -77,11 +74,9 @@ public abstract class BaseLazyFragment extends RxFragment {
     private void lazyLoad() {
         if (getUserVisibleHint() && isViewInitiated && !isAlreadyLoadData) {
 
-            Logger.d("lazyLoad--->:" + "第三步加载");
             onLazyLoad();
             isAlreadyLoadData = true;
         } else {
-            Logger.d("lazyLoad--->:" + "第三步已经加载过");
 
         }
 
@@ -89,7 +84,7 @@ public abstract class BaseLazyFragment extends RxFragment {
 
 
     /**
-     * 第四步:定义抽象方法fetchData(),具体加载数据的工作,交给子类去完成
+     * 第四步:定义抽象方法onLazyLoad(),具体加载数据的工作,交给子类去完成
      */
     public abstract void onLazyLoad();
 
@@ -108,7 +103,6 @@ public abstract class BaseLazyFragment extends RxFragment {
      * 加载过数据后，fragment变为不可见之后的需要执行的操作
      */
     public void InVisibleEvent() {
-        Logger.d("lazyLoad--->:" + "加载过数据");
 
     }
 

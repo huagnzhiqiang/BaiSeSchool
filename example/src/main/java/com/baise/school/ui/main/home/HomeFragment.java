@@ -1,5 +1,6 @@
 package com.baise.school.ui.main.home;
 
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.webkit.WebSettings;
@@ -20,10 +21,11 @@ import butterknife.BindView;
  * @time 2018/6/12 22:57
  * @desc 首页
  */
-public class HomeFragment extends BaseFragment{
+public class HomeFragment extends BaseFragment {
 
 
     @BindView(R.id.webView) WebView mWebView;
+//    private Dialog mLoadingDialog;
 
 
     public static HomeFragment getInstance(String title) {
@@ -52,6 +54,8 @@ public class HomeFragment extends BaseFragment{
     @Override
     protected void initData() {
         Logger.d("initData--->:");
+//        mLoadingDialog = createLoadingDialog(getContext(), "加载中...");
+//        mLoadingDialog.setCanceledOnTouchOutside(true);
         initWebView();
     }
 
@@ -99,19 +103,40 @@ public class HomeFragment extends BaseFragment{
             public boolean shouldOverrideUrlLoading(WebView view, String url) { // 重写此方法表明点击网页里面的链接还是在当前的webview里跳转，不跳到浏览器那边
 
                 Bundle bundle = new Bundle();
-                if(!TextUtils.isEmpty(url)) {
+                if (!TextUtils.isEmpty(url)) {
                     Logger.d("getIntent--->:" + url);
-                    bundle.putString(WebViewActivity.URL,url);
+                    bundle.putString(WebViewActivity.URL, url);
                     startActivity(WebViewActivity.class, bundle);
                 }
 
                 return true;
             }
 
+
+            public void onPageFinished(WebView view, String url) {
+                super.onPageFinished(view, url);
+
+                hideLoading();
+                //                if(mLoadingDialog!=null && mLoadingDialog.isShowing()) {
+                //                    mLoadingDialog.dismiss();
+                //                }
+
+            }
+
+            @Override
+            public void onPageStarted(WebView view, String url, Bitmap favicon) {
+                super.onPageStarted(view, url, favicon);
+
+                showLoading();
+                //                if(mLoadingDialog!=null) {
+                //                    mLoadingDialog.show();
+                //                }
+            }
+
         });
 
-    }
 
+    }
 
 
     /**

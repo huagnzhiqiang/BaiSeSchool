@@ -364,7 +364,7 @@ public abstract class BaseActivity extends RxAppCompatActivity {
 
 
         //销毁检查内存泄露问题插件
-        initLeakCanary();
+        //initLeakCanary();
     }
 
     /**

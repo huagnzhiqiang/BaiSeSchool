@@ -16,7 +16,6 @@ import android.webkit.WebViewClient;
 
 import com.baise.baselibs.base.BaseActivity;
 import com.baise.baselibs.utils.ToastUtils;
-import com.baise.baselibs.view.MultipleStatusView;
 import com.baise.school.R;
 import com.orhanobut.logger.Logger;
 
@@ -34,7 +33,6 @@ import butterknife.BindView;
     public static final String URL = "url";
 
     @BindView(R.id.web) WebView mWeb;
-    @BindView(R.id.multipleStatusView) MultipleStatusView mMultipleStatusView;
     private String mUrl;
 
 
@@ -115,7 +113,8 @@ import butterknife.BindView;
             @Override
             public void onPageStarted(WebView view, String url, Bitmap favicon) {
                 super.onPageStarted(view, url, favicon);
-                mMultipleStatusView.showLoading();
+
+                showLoadingDialog();
 
                 Logger.d("onPageStarted--->:");
             }
@@ -148,7 +147,7 @@ import butterknife.BindView;
             @Override
             public void onPageFinished(WebView view, String url) {
                 Logger.d("onPageFinished--->:" + url.toString());
-                mMultipleStatusView.showContent();
+                hideLoadingDialog();
             }
         });
 
