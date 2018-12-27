@@ -27,6 +27,7 @@ public class ChatDialog extends Dialog {
     public ChatDialog(Context context) {
         super(context, R.style.CustomDialog);
         setCustomDialog();
+        setCanceledOnTouchOutside(false);
     }
 
     private void setCustomDialog() {

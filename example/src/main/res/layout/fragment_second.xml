@@ -28,7 +28,7 @@
             android:layout_width="match_parent"
             android:layout_height="40dp"
             android:layout_centerVertical="true"
-            android:layout_marginLeft="10dp"
+            android:layout_marginLeft="5dp"
             android:layout_marginRight="45dp"
             android:background="@drawable/shape_chat"
             android:hint="请输入内容"

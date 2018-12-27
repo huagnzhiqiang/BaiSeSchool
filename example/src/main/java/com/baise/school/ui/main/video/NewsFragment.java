@@ -125,7 +125,7 @@ public class NewsFragment extends BaseFragment<NewsPresenter> implements NewsCon
 
                     ViewGroup.LayoutParams params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, CommonUtils.dp2px(40));
                     ((RelativeLayout.LayoutParams) params).rightMargin = CommonUtils.dp2px(65);
-                    ((RelativeLayout.LayoutParams) params).leftMargin = CommonUtils.dp2px(5);
+                    ((RelativeLayout.LayoutParams) params).leftMargin = CommonUtils.dp2px(10);
                     ((RelativeLayout.LayoutParams) params).addRule(RelativeLayout.CENTER_VERTICAL);
                     mSendText.setLayoutParams(params);
 
@@ -135,7 +135,7 @@ public class NewsFragment extends BaseFragment<NewsPresenter> implements NewsCon
 
                     ViewGroup.LayoutParams params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, CommonUtils.dp2px(40));
                     ((RelativeLayout.LayoutParams) params).rightMargin = CommonUtils.dp2px(45);
-                    ((RelativeLayout.LayoutParams) params).leftMargin = CommonUtils.dp2px(5);
+                    ((RelativeLayout.LayoutParams) params).leftMargin = CommonUtils.dp2px(10);
                     ((RelativeLayout.LayoutParams) params).addRule(RelativeLayout.CENTER_VERTICAL);
                     mSendText.setLayoutParams(params);
 
