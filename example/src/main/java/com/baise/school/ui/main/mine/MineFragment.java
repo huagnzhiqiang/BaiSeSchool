@@ -15,8 +15,6 @@ import com.baise.baselibs.utils.SpUtil;
 import com.baise.baselibs.utils.ToastUtils;
 import com.baise.school.R;
 import com.baise.school.constants.EventBusTag;
-import com.baise.school.data.entity.LoginEntity;
-import com.baise.school.data.entity.MineEntity;
 import com.mylhyl.circledialog.CircleDialog;
 
 import butterknife.BindView;
@@ -61,14 +59,6 @@ public class MineFragment extends BaseFragment<MinePresenter> implements MineCon
     }
 
 
-    @Override
-    protected void initListener() {
-
-    }
-
-    @Override
-    protected void initData() {
-    }
 
     @Override
     protected boolean useEventBus() {
@@ -76,18 +66,6 @@ public class MineFragment extends BaseFragment<MinePresenter> implements MineCon
     }
 
 
-    @Override
-    public void showData(MineEntity testNews) {
-
-    }
-
-    @Override
-    public void showLoginData(LoginEntity data) {
-        if (data != null) {
-            mLayoutStatusView.showContent();
-            ToastUtils.showShort(data.toString());
-        }
-    }
 
 
     /**
