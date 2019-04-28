@@ -16,7 +16,6 @@ import com.baise.baselibs.rx.RxBus;
 import com.baise.school.R;
 import com.baise.school.constants.EventBusTag;
 import com.baise.school.data.entity.TabEntity;
-import com.baise.school.data.entity.TestNews;
 import com.baise.school.ui.main.home.HomeFragment;
 import com.baise.school.ui.main.mine.MineFragment;
 import com.baise.school.ui.main.video.NewsFragment;
@@ -27,7 +26,6 @@ import com.gyf.barlibrary.ImmersionBar;
 import com.orhanobut.logger.Logger;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import butterknife.BindView;
 
@@ -139,11 +137,6 @@ public class MainActivity extends BaseMvpActivity<MainPresenter> implements Main
         return new MainPresenter();
     }
 
-
-    @Override
-    public void showData(List<TestNews> testNews) {
-
-    }
 
 
     /**

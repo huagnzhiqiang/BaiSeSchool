@@ -18,14 +18,6 @@ import io.reactivex.Observable;
 public class MineModel extends BaseModel implements MineContract.Model {
 
 
-    @Override
-    public Observable<BaseHttpResult<MineEntity>> getMineData() {
-        return RetrofitUtils.getHttpService().getMineData();
-    }
 
-    @Override
-    public Observable<BaseHttpResult<LoginEntity>> getLoginData(Map<String,String> map) {
-        return RetrofitUtils.getHttpService().getLoginData(map);
-    }
 
 }

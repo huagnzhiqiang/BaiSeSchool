@@ -15,10 +15,5 @@ public class MainPresenter extends BasePresenter<MainContract.Model,MainContract
         return new MainModel();
     }
 
-    public void requestData() {
-
-    }
-
-
 
 }
