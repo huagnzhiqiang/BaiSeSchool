@@ -85,7 +85,6 @@ public class NewsFragment extends BaseFragment<NewsPresenter> implements NewsCon
     private NewsEntityDao mMsmEntityDao;
     private Query<NewsEntity> mMsmEntityQuery;
 
-    private String[] defaultNest = {"百色学院地址", "地址", "百色学院", "百色", "学院"};
 
     //声音
     private String[] defaulAudio = {"亲,您的声音也太小了。", "亲,您的声音可以大点吗?", "亲,你没力气说了,该吃饭了。"};
@@ -266,16 +265,12 @@ public class NewsFragment extends BaseFragment<NewsPresenter> implements NewsCon
                         insertMsm(MsmAdapter.SEND, msg, getTime());
                         mRecyclerView.scrollToPosition(mAdapter.getItemCount() - 1);
 
-                        int length = defaultNest.length;
+                        String requestData = mPresenter.requestData(msg);
 
-                        for (int i = 0; i < length; i++) {
-                            String news = defaultNest[i];
-                            if (msg.equals(news)) {
-                                mPresenter.requestData(msg);
-                                return;
-                            }
+                        if (TextUtils.isEmpty(requestData) || requestData.length() == 0) {
+                            senNews(msg);
                         }
-                        senNews(msg);
+
                     }
 
 
@@ -635,6 +630,7 @@ public class NewsFragment extends BaseFragment<NewsPresenter> implements NewsCon
 
             //添加到Adapter
             NewsEntity entity = new NewsEntity().setContent(data.getText()).setTime(getTime()).setType(MsmAdapter.RECEIVER);
+            Logger.d("ShowNewsData---->:" + entity.toString());
             mAdapter.addData(entity);
             mRecyclerView.scrollToPosition(mAdapter.getItemCount() - 1);
 

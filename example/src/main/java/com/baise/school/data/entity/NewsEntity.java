@@ -23,9 +23,6 @@ public class NewsEntity implements MultiItemEntity {
     private int type;
 
 
-
-
-
     @Generated(hash = 81032921)
     public NewsEntity(Long id, String content, String time, int type) {
         this.id = id;
@@ -88,5 +85,11 @@ public class NewsEntity implements MultiItemEntity {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+
+    @Override
+    public String toString() {
+        return "NewsEntity{" + "id=" + id + ", content='" + content + '\'' + ", time='" + time + '\'' + ", type=" + type + '}';
     }
 }

@@ -105,7 +105,7 @@ public class BaseApplication extends Application {
         Logger.addLogAdapter(new AndroidLogAdapter(formatStrategy) {
             @Override
             public boolean isLoggable(int priority, String tag) {
-                return false; //关闭打印日志设置为false
+                return true; //关闭打印日志设置为false
             }
         });
     }

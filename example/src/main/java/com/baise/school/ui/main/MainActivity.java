@@ -185,7 +185,6 @@ public class MainActivity extends BaseMvpActivity<MainPresenter> implements Main
         // Fragment事务管理器
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         hideFragments(transaction);
-        Logger.d("current position tab" + position);
         switch (position) {
             case 0: //首页
                 if (mHomeFragment == null) {
@@ -195,16 +194,16 @@ public class MainActivity extends BaseMvpActivity<MainPresenter> implements Main
                     transaction.show(mHomeFragment);
                 }
                 break;
-            case 1: //视频
+            case 1: //趣味问答
                 if (mMsmFragment == null) {
                     mMsmFragment = NewsFragment.getInstance(mTitles[1]);
-                    transaction.add(R.id.fl_container, mMsmFragment, "video");
+                    transaction.add(R.id.fl_container, mMsmFragment, "news");
                 } else {
                     transaction.show(mMsmFragment);
                 }
                 break;
 
-            case 2: //更多
+            case 2: //我的
                 if (mMineFragment == null) {
                     mMineFragment = MineFragment.getInstance(mTitles[2]);
                     transaction.add(R.id.fl_container, mMineFragment, "mine");
