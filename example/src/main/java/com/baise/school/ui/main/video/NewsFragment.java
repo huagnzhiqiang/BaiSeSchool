@@ -296,7 +296,6 @@ public class NewsFragment extends BaseFragment<NewsPresenter> implements NewsCon
      */
     private void requestWriteExternaLStorage() {
 
-
         PermissionsUtil.TipInfo tip = new PermissionsUtil.TipInfo("提示", "当前应用缺少录音权限。\n \n请点击 \"设置\"-\"权限\"-打开所需权限。\n", "取消", "打开权限");
 
         PermissionsUtil.requestPermission(getContext(), new PermissionListener() {
@@ -629,7 +628,8 @@ public class NewsFragment extends BaseFragment<NewsPresenter> implements NewsCon
         if (mAdapter != null) {
 
             //添加到Adapter
-            NewsEntity entity = new NewsEntity().setContent(data.getText()).setTime(getTime()).setType(MsmAdapter.RECEIVER);
+            NewsEntity entity = new NewsEntity().setContent(data.getText()).
+                    setTime(getTime()).setType(MsmAdapter.RECEIVER);
             Logger.d("ShowNewsData---->:" + entity.toString());
             mAdapter.addData(entity);
             mRecyclerView.scrollToPosition(mAdapter.getItemCount() - 1);
